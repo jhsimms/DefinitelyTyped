@@ -20,7 +20,7 @@ const pre3 = (request: Request, h: ResponseToolkit) => {
 server.route({
     method: 'GET',
     path: '/',
-    config: {
+    options: {
         pre: [
             [
                 // m1 and m2 executed in parallel

@@ -182,7 +182,7 @@ export interface RouteOptions {
      * Plugin-specific configuration. plugins is an object where each key is a plugin name and the value is the plugin configuration.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsplugins)
      */
-    plugins?: Util.Dictionary<PluginSpecificConfiguration>;
+    plugins?: PluginSpecificConfiguration;
 
     /**
      * Default value: none.

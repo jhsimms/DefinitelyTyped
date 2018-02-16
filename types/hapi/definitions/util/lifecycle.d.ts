@@ -14,8 +14,7 @@ export namespace Lifecycle {
      * * err - an error object availble only when the method is used as a failAction value.
      */
     export interface Method {
-        (request: Request, h: ResponseToolkit): ReturnValue;
-        (request: Request, h: ResponseToolkit, err: Error): ReturnValue;
+        (request: Request, h: ResponseToolkit, err?: Error): ReturnValue;
     }
 
     /**

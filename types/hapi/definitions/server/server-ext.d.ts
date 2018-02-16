@@ -9,14 +9,8 @@ import {Lifecycle, Server} from "hapi";
  * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverextevents)
  * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#request-lifecycle)
  */
-export type ServerExtType = 'onRequest' | 'onPreStart' | 'onPostStart' | 'onPreStop' | 'onPostStop'| 'onPreResponse';
-
-/**
- * The extension point event name for Request
- * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverextevents)
- * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#request-lifecycle)
- */
-export type ServerExtRequestType = 'onRequest';
+export type ServerExtType = 'onPreStart' | 'onPostStart' | 'onPreStop' | 'onPostStop';
+export type ServerRequestExtType = 'onRequest' | 'onPreAuth' | 'onCredentials' | 'onPostAuth' | 'onPreHandler' | 'onPostHandler' | 'onPreResponse';
 
 /**
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverextevents)
@@ -54,7 +48,7 @@ export interface ServerExtEventsObject {
      * * * this - the object provided via options.bind or the current active context set with server.bind().
      * * request extension points: a lifecycle method.
      */
-    method: ServerExtPointFunction | ServerExtPointFunction[] | Function;
+    method: ServerExtPointFunction | ServerExtPointFunction[];
     /**
      * options - (optional) an object with the following:
      * * before - a string or array of strings of plugin names this method must execute before (on the same event). Otherwise, extension methods are executed in the order added.
@@ -94,7 +88,7 @@ export interface ServerExtEventsRequestObject {
      * * 'onPreStop' - called before the connection listeners are stopped.
      * * 'onPostStop' - called after the connection listeners are stopped.
      */
-    type: ServerExtRequestType;
+    type: ServerRequestExtType;
     /**
      * (required) a function or an array of functions to be executed at a specified point during request processing. The required extension function signature is:
      * * server extension points: async function(server) where:

@@ -11,6 +11,7 @@ import {
     RequestRoute,
     ResponseToolkit,
     RouteCompressionEncoderSettings,
+    RouteOptions,
     ServerAuth,
     ServerCache,
     ServerEvents,
@@ -20,6 +21,7 @@ import {
     ServerExtOptions,
     ServerExtPointFunction,
     ServerExtType,
+    ServerRequestExtType,
     ServerInfo,
     ServerInjectOptions,
     ServerInjectResponse,
@@ -36,6 +38,15 @@ import {
     ServerStateCookieOptions,
     Util,
 } from "hapi";
+
+
+/**
+ * The method function can have a defaults object or function property. If the property is set to an object, that object is used as the default route config for routes using this handler. 
+ * If the property is set to a function, the function uses the signature function(method) and returns the route default configuration.
+ */
+export interface HandlerDecorationMethod extends Function {
+    defaults: RouteOptions | ((method: Function) => RouteOptions);
+}
 
 /**
  * The server object is the main application container. The server manages all incoming requests along with all
@@ -280,8 +291,11 @@ export class Server extends Podium {
      * @return void;
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverdecoratetype-property-method-options)
      */
-    decorate(type: 'request', property: string, method: ((request: Request) => Function), options?: {apply: true;  extend: false} ): void;
-    decorate(type: 'handler' | 'request' | 'server' | 'toolkit', property: string, method: Function, options?: {apply: boolean;  extend: boolean} ): void;
+    decorate(type: 'handler', property: string, method: HandlerDecorationMethod, options?: {apply?: boolean, extend?: boolean}): void;
+    decorate(type: 'request', property: string, method: (existing: Function) => (request: Request) => Function, options: {apply: true, extend: true}): void;
+    decorate(type: 'request', property: string, method: (request: Request) => Function, options: {apply: true, extend?: boolean}): void;
+    decorate(type: 'server' | 'toolkit' | 'request', property: string, method: (existing: Function) => Function, options: {apply?: boolean, extend: true}): void;
+    decorate(type: 'server' | 'toolkit' | 'request', property: string, method: Function, options?: {apply?: boolean, extend?: boolean}): void;
 
     /**
      * Used within a plugin to declare a required dependency on other plugins where:
@@ -354,7 +368,8 @@ export class Server extends Podium {
      * @return Return value: none.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverextevent-method-options)
      */
-    ext(event: ServerExtType, method: ServerExtPointFunction | Lifecycle.Method | Function, options?: ServerExtOptions): void;
+    ext(event: ServerExtType, method: ServerExtPointFunction, options?: ServerExtOptions): void;
+    ext(event: ServerRequestExtType, method: Lifecycle.Method, options?: ServerExtOptions): void;
 
     /**
      * Initializes the server (starts the caches, finalizes plugin registration) but does not start listening on the connection port.
@@ -486,6 +501,7 @@ export class Server extends Podium {
      */
     register(plugins: Plugin<any> | Plugin<any>[], options?: ServerRegisterOptions): Promise<void>;
     register<T, U, V, W, X, Y, Z>(plugins: ServerRegisterPluginObject<T> | ServerRegisterPluginObjectArray<T, U, V, W, X, Y, Z>, options?: ServerRegisterOptions): Promise<void>;
+    register(plugins: ServerRegisterPluginObject<any>[], options?: ServerRegisterOptions): Promise<void>;
 
     /**
      * Adds a route where:

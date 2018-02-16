@@ -1,8 +1,5 @@
 import {Lifecycle, RouteOptions, Server, Util} from "hapi";
 
-export interface ServerRouteConfig {
-}
-
 /**
  * A route configuration object or an array of configuration objects where each object contains:
  * * path - (required) the absolute path used to match incoming requests (must begin with '/'). Incoming requests are compared to the configured paths based on the server's router configuration. The path can include named parameters enclosed in {} which will be matched against literal values in the request as described in Path parameters.
@@ -46,10 +43,4 @@ export interface ServerRoute {
      * route custom rules object. The object is passed to each rules processor registered with server.rules(). Cannot be used if route.options.rules is defined.
      */
     rules?: object;
-
-    /**
-     * Missing documentation. Exist only in examples and test files.
-     */
-    config?: ServerRouteConfig;
-
 }

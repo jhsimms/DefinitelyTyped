@@ -1,7 +1,11 @@
 import {Lifecycle, Util} from "hapi";
-import {ValidationOptions} from "joi";
+import {AnySchema} from "joi";
 
-export type RouteOptionsResponseSchema = boolean | ValidationOptions | ((value: object | Buffer | string, options: ValidationOptions) => Promise<any>);
+export interface ValidationObject {
+    [key: string]: AnySchema;
+}
+
+export type RouteOptionsResponseSchema = boolean | ValidationObject | ((value: object | Buffer | string, options: ValidationOptions) => Promise<any>);
 
 /**
  * Processing rules for the outgoing response.

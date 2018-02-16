@@ -28,6 +28,8 @@ export interface RequestInfo {
     host: string;
     /** the hostname part of the 'Host' header (e.g. 'example.com'). */
     hostname: string;
+    /** a unique request identifier (using the format '{now}:{connection.info.id}:{5 digits counter}') */
+    id: string;
     /** request reception timestamp. */
     received: number;
     /** content of the HTTP 'Referrer' (or 'Referer') header. */

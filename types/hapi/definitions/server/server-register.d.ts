@@ -24,7 +24,7 @@ export interface ServerRegisterOptions {
         /**
          * virtual host string (or array of strings) applied to every route. The outer-most vhost overrides the any nested configuration.
          */
-        vhost: string | string[];
+        vhost?: string | string[];
     };
 }
 
