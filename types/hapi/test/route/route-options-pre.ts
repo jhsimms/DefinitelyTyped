@@ -1,6 +1,5 @@
 // https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspre
-import { Request, ResponseToolkit, Server } from "hapi";
-import { Lifecycle } from "../..";
+import { Lifecycle, Request, ResponseToolkit, Server } from "hapi";
 
 const server = new Server({
     port: 8000,
