@@ -15,15 +15,13 @@ export interface ResponseEvents extends Podium {
      * 'finish' - emitted when the response finished writing but before the client response connection is ended. The event method signature is function ().
      */
     on(criteria: 'peek', listener: PeekListener): void;
-    on(criteria: 'finish', listener: () => void): void;
-    on(criteria: 'peek' | 'finish', listener: Function): void;
+    on(criteria: 'finish', listener: (data: void) => void): void;
 
     /**
      * 'peek' - emitted for each chunk of data written back to the client connection. The event method signature is function(chunk, encoding).
      * 'finish' - emitted when the response finished writing but before the client response connection is ended. The event method signature is function ().
      */
     once(criteria: 'peek', listener: PeekListener): void;
-    once(criteria: 'finish', listener: () => void): void;
-    once(criteria: 'peek' | 'finish', listener: Function): void;
+    once(criteria: 'finish', listener: (data: void) => void): void;
 
 }

@@ -2,7 +2,6 @@
  * User-extensible type for request.auth credentials.
  */
 export interface AuthCredentials {
-    user?: string;
 }
 
 /**

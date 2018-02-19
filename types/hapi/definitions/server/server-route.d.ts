@@ -1,5 +1,9 @@
 import {Lifecycle, RouteOptions, Server, Util} from "hapi";
 
+export interface HandlerDecorations {
+
+}
+
 /**
  * A route configuration object or an array of configuration objects where each object contains:
  * * path - (required) the absolute path used to match incoming requests (must begin with '/'). Incoming requests are compared to the configured paths based on the server's router configuration. The path can include named parameters enclosed in {} which will be matched against literal values in the request as described in Path parameters.
@@ -32,7 +36,7 @@ export interface ServerRoute {
     /**
      * (required when handler is not set) the route handler function called to generate the response after successful authentication and validation.
      */
-    handler?: Lifecycle.Method | object;
+    handler?: Lifecycle.Method | HandlerDecorations;
 
     /**
      * additional route options. The options value can be an object or a function that returns an object using the signature function(server) where server is the server the route is being added to and this is bound to the current realm's bind option.

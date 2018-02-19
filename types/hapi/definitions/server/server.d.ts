@@ -41,11 +41,12 @@ import {
 
 
 /**
- * The method function can have a defaults object or function property. If the property is set to an object, that object is used as the default route config for routes using this handler. 
+ * The method function can have a defaults object or function property. If the property is set to an object, that object is used as the default route config for routes using this handler.
  * If the property is set to a function, the function uses the signature function(method) and returns the route default configuration.
  */
-export interface HandlerDecorationMethod extends Function {
-    defaults: RouteOptions | ((method: Function) => RouteOptions);
+export interface HandlerDecorationMethod<T> {
+    (route: RouteOptions, options: T): Lifecycle.Method;
+    defaults?: RouteOptions | ((method: any) => RouteOptions);
 }
 
 /**
@@ -291,11 +292,10 @@ export class Server extends Podium {
      * @return void;
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverdecoratetype-property-method-options)
      */
-    decorate(type: 'handler', property: string, method: HandlerDecorationMethod, options?: {apply?: boolean, extend?: boolean}): void;
-    decorate(type: 'request', property: string, method: (existing: Function) => (request: Request) => Function, options: {apply: true, extend: true}): void;
-    decorate(type: 'request', property: string, method: (request: Request) => Function, options: {apply: true, extend?: boolean}): void;
-    decorate(type: 'server' | 'toolkit' | 'request', property: string, method: (existing: Function) => Function, options: {apply?: boolean, extend: true}): void;
-    decorate(type: 'server' | 'toolkit' | 'request', property: string, method: Function, options?: {apply?: boolean, extend?: boolean}): void;
+    decorate<T>(type: 'handler', property: string, method: HandlerDecorationMethod<T>, options?: {apply?: boolean, extend?: boolean}): void;
+    decorate(type: 'request', property: string, method: (this: Request) => Lifecycle.ReturnValue, options?: {apply: false, extend?: boolean}): void;
+    decorate(type: 'request', property: string, method: (request: Request) => (this: Request) => Lifecycle.ReturnValue, options: {apply: true, extend?: boolean}): void;
+    decorate(type: 'toolkit', property: string, method: (this: ResponseToolkit) => Lifecycle.ReturnValue): void;
 
     /**
      * Used within a plugin to declare a required dependency on other plugins where:
@@ -500,7 +500,8 @@ export class Server extends Podium {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-serverregisterplugins-options)
      */
     register(plugins: Plugin<any> | Plugin<any>[], options?: ServerRegisterOptions): Promise<void>;
-    register<T, U, V, W, X, Y, Z>(plugins: ServerRegisterPluginObject<T> | ServerRegisterPluginObjectArray<T, U, V, W, X, Y, Z>, options?: ServerRegisterOptions): Promise<void>;
+    register<T>(plugin: ServerRegisterPluginObject<T>, options?: ServerRegisterOptions): Promise<void>;
+    register<T, U, V, W, X, Y, Z>(plugins: ServerRegisterPluginObjectArray<T, U, V, W, X, Y, Z>, options?: ServerRegisterOptions): Promise<void>;
     register(plugins: ServerRegisterPluginObject<any>[], options?: ServerRegisterOptions): Promise<void>;
 
     /**

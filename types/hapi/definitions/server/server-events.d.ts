@@ -70,7 +70,7 @@ export interface LogEvent {
     /** event-specific information. Available when event data was provided and is not an error. Errors are passed via error. */
     data: object;
     /** the error object related to the event if applicable. Cannot appear together with data */
-    error: object;   
+    error: object;
 }
 
 export interface RequestEvent {
@@ -83,7 +83,7 @@ export interface RequestEvent {
     /** event-specific information. Available when event data was provided and is not an error. Errors are passed via error. */
     data: object;
     /** the error object related to the event if applicable. Cannot appear together with data */
-    error: object;   
+    error: object;
 }
 
 export type LogEventHandler = (event: LogEvent, tags: object) => void;
@@ -92,6 +92,16 @@ export type ResponseEventHandler = (request: Request) => void;
 export type RouteEventHandler = (route: ServerRoute) => void;
 export type StartEventHandler = () => void;
 export type StopEventHandler = () => void;
+
+export interface PodiumEvent<K extends string, T> {
+    emit(criteria: K, listener: (value: T) => void): void;
+    on(criteria: K, listener: (value: T) => void): void;
+    once(criteria: K, listener: (value: T) => void): void;
+    once(criteria: K): Promise<T>;
+    removeListener(criteria: K, listener: Podium.Listener): this;
+    removeAllListeners(criteria: K): this;
+    hasListeners(criteria: K): this;
+}
 
 /**
  * Access: podium public interface.
@@ -105,23 +115,6 @@ export type StopEventHandler = () => void;
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverevents)
  */
 export interface ServerEvents extends Podium {
-
-    /**
-     * Emits a custom application event to all the subscribed listeners where:
-     * @param criteria - the event update criteria which must be one of:
-     * * the event name string.
-     * * an object with the following optional keys (unless noted otherwise):
-     * * * name - the event name string (required).
-     * * * channel - the channel name string.
-     * * * tags - a tag string or array of tag strings.
-     * @param data - the value emitted to the subscribers. If data is a function, the function signature is function() and it called once to generate (return value) the actual data emitted to the listeners. If no listeners match the event, the data function is not invoked.
-     * @return Return value: none.
-     * Note that events must be registered before they can be emitted or subscribed to by calling server.event(events). This is done to detect event name misspelling and invalid event activities.
-     * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-servereventsemitcriteria-data)
-     */
-    emit(criteria: string, data: any | Function): Promise<void>;
-    emit(criteria: {name: string, channel?: string, tags?: string | string[]}, data: any): Promise<void>;
-
     /**
      * Subscribe to an event where:
      * @param criteria - the subscription criteria which must be one of:
@@ -144,7 +137,6 @@ export interface ServerEvents extends Podium {
     on(criteria: "route" | ServerEventCriteria<"route">, listener: RouteEventHandler): void;
     on(criteria: "start" | ServerEventCriteria<"start">, listener: StartEventHandler): void;
     on(criteria: "stop" | ServerEventCriteria<"stop">, listener: StopEventHandler): void;
-    on(criteria: string | ServerEventCriteria<string>, listener: Function): void;
 
     /**
      * Same as calling [server.events.on()](https://github.com/hapijs/hapi/blob/master/API.md#server.events.on()) with the count option set to 1.
@@ -162,7 +154,6 @@ export interface ServerEvents extends Podium {
     once(criteria: "route" | ServerEventCriteria<"route">, listener: RouteEventHandler): void;
     once(criteria: "start" | ServerEventCriteria<"start">, listener: StartEventHandler): void;
     once(criteria: "stop" | ServerEventCriteria<"stop">, listener: StopEventHandler): void;
-    once(criteria: string | ServerEventCriteria<string>, listener: Function): void;
 
 
     /**

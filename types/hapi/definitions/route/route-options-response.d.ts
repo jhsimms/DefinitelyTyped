@@ -1,5 +1,5 @@
 import {Lifecycle, Util} from "hapi";
-import {AnySchema} from "joi";
+import {AnySchema, ValidationOptions} from "joi";
 
 export interface ValidationObject {
     [key: string]: AnySchema;

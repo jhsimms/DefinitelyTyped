@@ -97,7 +97,14 @@ export interface RouteOptions {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsext)
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#request-lifecycle)
      */
-    ext?: object;
+    ext?: {
+        onPreAuth?: Lifecycle.Method;
+        onCredentials?: Lifecycle.Method;
+        onPostAuth?: Lifecycle.Method;
+        onPreHandler?: Lifecycle.Method;
+        onPostHandler?: Lifecycle.Method;
+        onPreResponse?: Lifecycle.Method;
+    };
 
     /**
      * Default value: { relativeTo: '.' }.

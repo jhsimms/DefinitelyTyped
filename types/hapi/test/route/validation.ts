@@ -17,7 +17,7 @@ const routeOptions: RouteOptions = {
 const serverRoute: ServerRoute = {
     path: '/',
     method: 'GET',
-    handler: (request: Request, h: ResponseToolkit) => {
+    handler(request, h) {
         return 'ok: ' + request.path;
     },
     options: routeOptions
