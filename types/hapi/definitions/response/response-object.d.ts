@@ -1,4 +1,3 @@
-import * as Boom from "boom";
 import * as Podium from "podium";
 import {ApplicationState, Json, Lifecycle, PluginsStates, ResponseEvents, ResponseSettings, ServerStateCookieOptions, Util} from "hapi";
 
@@ -167,11 +166,6 @@ export interface ResponseObject extends Podium {
      */
     header(name: string, value: string, options?: ResponseObjectHeaderOptions): ResponseObject;
 
-   /**
-    * if true, indicates this is a Boom object instance.
-    */
-    isBoom?: boolean; 
-
     /**
      * Sets the HTTP 'Location' header where:
      * @param uri - an absolute or relative URI used as the 'Location' header value.
@@ -179,11 +173,6 @@ export interface ResponseObject extends Podium {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-responselocationuri)
      */
     location(uri: string): ResponseObject;
-
-    /**
-     * the formatted response. Can be directly manipulated after object construction to return a custom error response. 
-     */
-    output?: Boom.Output;
 
     /**
      * Sets an HTTP redirection response (302) and decorates the response with additional methods, where:
