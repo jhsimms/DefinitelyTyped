@@ -308,7 +308,7 @@ export class Server extends Podium {
      * The method does not provide version dependency which should be implemented using npm peer dependencies.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverdependencydependencies-after)
      */
-    dependency(dependencies: string | string[], after?: ((server: Server) => void)): void;
+    dependency(dependencies: string | string[], after?: ((server: Server) => Promise<void>)): void;
 
     /**
      * Registers a custom content encoding compressor to extend the built-in support for 'gzip' and 'deflate' where:
