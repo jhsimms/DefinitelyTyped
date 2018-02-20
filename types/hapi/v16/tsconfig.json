@@ -19,11 +19,7 @@
             ],
             "hapi": [
                 "hapi/v16"
-            ],
-            "vision": [
-                "vision/v4"
             ]
-
         },
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
