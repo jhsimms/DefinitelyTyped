@@ -13,11 +13,7 @@ import {
 } from 'hapi';
 
 declare namespace vision {
-    /**
-     * Options for initialising server views manager
-     * @see {@link https://github.com/hapijs/vision/blob/master/API.md#serverviewsoptions}
-     */
-    interface ServerViewsConfiguration extends ServerViewsAdditionalOptions {
+    interface EnginesConfiguration {
         /**
          * Required object where each key is a file extension (e.g. 'html', 'hbr'), mapped to the npm module used for rendering the templates.
          * Alternatively, the extension can be mapped to an object
@@ -30,14 +26,14 @@ declare namespace vision {
     /**
      * Includes `module` and any of the views options listed below (@see ServerViewsAdditionalOptions) (except defaultExtension) to override the defaults for a specific engine.
      */
-    interface ServerViewsEnginesOptions extends ServerViewsAdditionalOptions {
+    interface ServerViewsEnginesOptions extends ServerViewsConfiguration {
         /**
          * The npm module used for rendering the templates. The module object must contain the compile() function
          * @see {@link https://github.com/hapijs/vision/blob/master/API.md#serverviewsoptions} > options > engines > module
          */
         module: NpmModule;
     }
-    interface ServerViewsAdditionalOptions extends ViewHandlerOrReplyOptions {
+    interface ServerViewsConfiguration extends ViewHandlerOrReplyOptions, EnginesConfiguration {
         /**
          * The root file path, or array of file paths, where partials are located.
          * Partials are small segments of template code that can be nested and reused throughout other templates.
@@ -171,7 +167,7 @@ declare namespace vision {
      * @param context - optional object used by the template to render context-specific result. Defaults to no context ({}).
      * @param options - optional object used to override the views manager configuration.
      */
-    type RenderMethod = (template: string, context?: any, options?: ServerViewsAdditionalOptions) => Promise<string>;
+    type RenderMethod = (template: string, context?: any, options?: ServerViewsConfiguration) => Promise<string>;
 
     /**
      * View Manager
@@ -195,7 +191,7 @@ declare namespace vision {
     }
 }
 
-declare const vision: Plugin<vision.ServerViewsAdditionalOptions>;
+declare const vision: Plugin<vision.ServerViewsConfiguration>;
 
 export = vision;
 

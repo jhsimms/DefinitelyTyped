@@ -54,7 +54,7 @@ server.register([Basic, Nes]).then(() => {
     server.route({
         method: 'GET',
         path: '/h',
-        config: {
+        options: {
             id: 'hello',
             handler: function (request: Request, h: ResponseToolkit) {
 
