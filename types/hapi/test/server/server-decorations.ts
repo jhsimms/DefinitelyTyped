@@ -1,7 +1,7 @@
 // https://github.com/hapijs/hapi/blob/master/API.md#-serverdecoratetype-property-method-options
 import { ResponseToolkit, Server } from "hapi";
 
-declare module 'hapi/definitions/server/server-route' {
+declare module 'hapi' {
     interface HandlerDecorations {
         test?: {
             test: number;

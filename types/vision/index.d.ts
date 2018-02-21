@@ -195,7 +195,7 @@ declare const vision: Plugin<vision.ServerViewsConfiguration>;
 
 export = vision;
 
-declare module 'hapi/definitions/server/server' {
+declare module 'hapi' {
     interface Server {
         /**
          * Initializes the server views manager
@@ -210,7 +210,7 @@ declare module 'hapi/definitions/server/server' {
     }
 }
 
-declare module 'hapi/definitions/request/request' {
+declare module 'hapi' {
     interface Request {
         /**
          * request.render() works the same way as server.render() but is for use inside of request handlers.
@@ -225,7 +225,7 @@ declare module 'hapi/definitions/request/request' {
     }
 }
 
-declare module 'hapi/definitions/response/response-toolkit' {
+declare module 'hapi' {
     interface ResponseToolkit {
         /**
          * Concludes the handler activity by returning control over to the router with a templatized view response
@@ -241,7 +241,7 @@ declare module 'hapi/definitions/response/response-toolkit' {
     }
 }
 
-declare module 'hapi/definitions/route/route-options' {
+declare module 'hapi' {
     interface RouteOptions {
         /**
          * The view handler can be used with routes registered in the same realm as the view manager.

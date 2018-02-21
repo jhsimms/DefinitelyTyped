@@ -7,7 +7,7 @@ import Nes = require('nes');
 
 const server = new Server();
 
-declare module 'hapi/definitions/request/request-auth' {
+declare module 'hapi' {
     interface AuthCredentials {
         id: string;
         name: string;

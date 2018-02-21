@@ -6,7 +6,7 @@ const server = new Server({
 });
 
 // Definition for INERT
-declare module 'hapi/definitions/server/server-route' {
+declare module 'hapi' {
     interface HandlerDecorations {
         file?: string;
     }

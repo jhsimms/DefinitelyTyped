@@ -27,11 +27,10 @@ import * as stream from "stream";
 import * as url from "url";
 import * as zlib from "zlib";
 
+import { MimosOptions } from "mimos";
+import { SealOptions, SealOptionsSub } from "iron";
+import { AnySchema, ValidationOptions } from "joi";
 import Podium = require("podium");
-
-import {MimosOptions} from "mimos";
-import {SealOptions, SealOptionsSub} from "iron";
-import {AnySchema, ValidationOptions} from "joi";
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
  +                                                                           +
@@ -43,9 +42,11 @@ import {AnySchema, ValidationOptions} from "joi";
  +                                                                           +
  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
- /**
+/**
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverregistrations)
  */
+
+/* tslint:disable-next-line:no-empty-interface */
 export interface PluginsListRegistered {
 }
 
@@ -58,7 +59,6 @@ export interface PluginsListRegistered {
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverregistrations)
  */
 export interface PluginRegistered {
-
     /**
      * the plugin version.
      */
@@ -73,14 +73,14 @@ export interface PluginRegistered {
      * options used to register the plugin.
      */
     options: object;
-
 }
 
+/* tslint:disable-next-line:no-empty-interface */
 export interface PluginsStates {
 }
 
+/* tslint:disable-next-line:no-empty-interface */
 export interface PluginSpecificConfiguration {
-
 }
 
 export interface PluginNameVersion {
@@ -91,12 +91,14 @@ export interface PluginNameVersion {
      */
     name: string;
 
-    /** optional plugin version. The version is only used informatively to enable other plugins to find out the versions loaded. The version should be the same as the one specified in the plugin's 'package.json' file. */
+    /**
+     * optional plugin version. The version is only used informatively to enable other plugins to find out the versions loaded. The version should be the same as the one specified in the plugin's
+     * 'package.json' file.
+     */
     version?: string;
 }
 
 export interface PluginPackage {
-
     /**
      * Alternatively, the name and version can be included via the pkg property containing the 'package.json' file for the module which already has the name and version included
      */
@@ -113,7 +115,6 @@ export interface PluginPackage {
  * The type T is the type of the plugin options.
  */
 export interface PluginBase<T> {
-
     /**
      * (required) the registration function with the signature async function(server, options) where:
      * * server - the server object with a plugin-specific server.realm.
@@ -143,9 +144,11 @@ export type Plugin<T> = PluginBase<T> & (PluginNameVersion | PluginPackage);
  +                                                                           +
  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
- /**
+/**
  * User-extensible type for request.auth credentials.
  */
+
+/* tslint:disable-next-line:no-empty-interface */
 export interface AuthCredentials {
 }
 
@@ -155,7 +158,8 @@ export interface AuthCredentials {
  * * credentials - the credential object received during the authentication process. The presence of an object does not mean successful authentication.
  * * error - the authentication error is failed and mode set to 'try'.
  * * isAuthenticated - true if the request has been successfully authenticated, otherwise false.
- * * isAuthorized - true is the request has been successfully authorized against the route authentication access configuration. If the route has not access rules defined or if the request failed authorization, set to false.
+ * * isAuthorized - true is the request has been successfully authorized against the route authentication access configuration. If the route has not access rules defined or if the request failed
+ * authorization, set to false.
  * * mode - the route authentication mode.
  * * strategy - the name of the strategy used.
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-requestauth)
@@ -169,7 +173,10 @@ export interface RequestAuth {
     error: Error;
     /** true if the request has been successfully authenticated, otherwise false. */
     isAuthenticated: boolean;
-    /** true is the request has been successfully authorized against the route authentication access configuration. If the route has not access rules defined or if the request failed authorization, set to false. */
+    /**
+     * true is the request has been successfully authorized against the route authentication access configuration. If the route has not access rules defined or if the request failed authorization,
+     * set to false.
+     */
     isAuthorized: boolean;
     /** the route authentication mode. */
     mode: string;
@@ -194,7 +201,6 @@ export type RequestEventType = "peek" | "finish" | "disconnect";
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-requestevents)
  */
 export interface RequestEvents extends Podium {
-
     /**
      * Access: read only and the public podium interface.
      * The request.events supports the following events:
@@ -204,7 +210,8 @@ export interface RequestEvents extends Podium {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-requestevents)
      */
     on(criteria: "peek", listener: PeekListener): void;
-    on(criteria: "finish" | "disconnect", listener: (data: void) => void): void;
+
+    on(criteria: "finish" | "disconnect", listener: (data: undefined) => void): void;
 
     /**
      * Access: read only and the public podium interface.
@@ -215,14 +222,16 @@ export interface RequestEvents extends Podium {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-requestevents)
      */
     once(criteria: "peek", listener: PeekListener): void;
-    once(criteria: "finish" | "disconnect", listener: (data: void) => void): void;
+
+    once(criteria: "finish" | "disconnect", listener: (data: undefined) => void): void;
 }
 
 /**
  * Request information:
  * * acceptEncoding - the request preferred encoding.
  * * cors - if CORS is enabled for the route, contains the following:
- * * isOriginMatch - true if the request 'Origin' header matches the configured CORS restrictions. Set to false if no 'Origin' header is found or if it does not match. Note that this is only available after the 'onRequest' extension point as CORS is configured per-route and no routing decisions are made at that point in the request lifecycle.
+ * * isOriginMatch - true if the request 'Origin' header matches the configured CORS restrictions. Set to false if no 'Origin' header is found or if it does not match. Note that this is only
+ * available after the 'onRequest' extension point as CORS is configured per-route and no routing decisions are made at that point in the request lifecycle.
  * * host - content of the HTTP 'Host' header (e.g. 'example.com:8080').
  * * hostname - the hostname part of the 'Host' header (e.g. 'example.com').
  * * id - a unique request identifier (using the format '{now}:{connection.info.id}:{5 digits counter}').
@@ -240,7 +249,8 @@ export interface RequestInfo {
     /** if CORS is enabled for the route, contains the following: */
     cors: {
         /**
-         * true if the request 'Origin' header matches the configured CORS restrictions. Set to false if no 'Origin' header is found or if it does not match. Note that this is only available after the 'onRequest' extension point as CORS is configured per-route and no routing decisions are made at that point in the request lifecycle.
+         * true if the request 'Origin' header matches the configured CORS restrictions. Set to false if no 'Origin' header is found or if it does not match. Note that this is only available after
+         * the 'onRequest' extension point as CORS is configured per-route and no routing decisions are made at that point in the request lifecycle.
          */
         isOriginMatch?: boolean;
     };
@@ -273,7 +283,6 @@ export interface RequestInfo {
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-requestroute)
  */
 export interface RequestRoute {
-
     /** the route HTTP method. */
     method: Util.HTTP_METHODS_PARTIAL;
 
@@ -283,7 +292,7 @@ export interface RequestRoute {
     /** the route vhost option if configured. */
     vhost?: string | string[];
 
-    /** the active realm associated with the route.*/
+    /** the active realm associated with the route. */
     realm: ServerRealm;
 
     /** the route options object with all defaults applied. */
@@ -297,13 +306,14 @@ export interface RequestRoute {
          * Validates a request against the route's authentication access configuration, where:
          * @param request - the request object.
          * @return Return value: true if the request would have passed the route's access requirements.
-         * Note that the route's authentication mode and strategies are ignored. The only match is made between the request.auth.credentials scope and entity information and the route access configuration.
-         * If the route uses dynamic scopes, the scopes are constructed against the request.query, request.params, request.payload, and request.auth.credentials which may or may not match between the route and the request's route. If this method is called using a request that has not been authenticated (yet or not at all), it will return false if the route requires any authentication.
+         * Note that the route's authentication mode and strategies are ignored. The only match is made between the request.auth.credentials scope and entity information and the route access
+         *     configuration. If the route uses dynamic scopes, the scopes are constructed against the request.query, request.params, request.payload, and request.auth.credentials which may or may
+         *     not match between the route and the request's route. If this method is called using a request that has not been authenticated (yet or not at all), it will return false if the route
+         *     requires any authentication.
          * [See docs](https://hapijs.com/api/17.0.1#-requestrouteauthaccessrequest)
          */
         access(request: Request): boolean;
-    }
-
+    };
 }
 
 /**
@@ -330,7 +340,6 @@ export interface RequestLog {
  * the request [lifecycle](https://github.com/hapijs/hapi/blob/master/API.md#request-lifecycle).
  */
 export interface Request extends Podium {
-
     /**
      * Application-specific state. Provides a safe place to store application data without potential conflicts with the framework. Should not be used by plugins which should use plugins[name].
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-requestapp)
@@ -343,7 +352,8 @@ export interface Request extends Podium {
      * * credentials - the credential object received during the authentication process. The presence of an object does not mean successful authentication.
      * * error - the authentication error is failed and mode set to 'try'.
      * * isAuthenticated - true if the request has been successfully authenticated, otherwise false.
-     * * isAuthorized - true is the request has been successfully authorized against the route authentication access configuration. If the route has not access rules defined or if the request failed authorization, set to false.
+     * * isAuthorized - true is the request has been successfully authorized against the route authentication access configuration. If the route has not access rules defined or if the request failed
+     * authorization, set to false.
      * * mode - the route authentication mode.
      * * strategy - the name of the strategy used.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-requestauth)
@@ -370,7 +380,8 @@ export interface Request extends Podium {
      * Request information:
      * * acceptEncoding - the request preferred encoding.
      * * cors - if CORS is enabled for the route, contains the following:
-     * * isOriginMatch - true if the request 'Origin' header matches the configured CORS restrictions. Set to false if no 'Origin' header is found or if it does not match. Note that this is only available after the 'onRequest' extension point as CORS is configured per-route and no routing decisions are made at that point in the request lifecycle.
+     * * isOriginMatch - true if the request 'Origin' header matches the configured CORS restrictions. Set to false if no 'Origin' header is found or if it does not match. Note that this is only
+     * available after the 'onRequest' extension point as CORS is configured per-route and no routing decisions are made at that point in the request lifecycle.
      * * host - content of the HTTP 'Host' header (e.g. 'example.com:8080').
      * * hostname - the hostname part of the 'Host' header (e.g. 'example.com').
      * * id - a unique request identifier (using the format '{now}:{connection.info.id}:{5 digits counter}').
@@ -432,13 +443,15 @@ export interface Request extends Podium {
     plugins: PluginsStates;
 
     /**
-     * An object where each key is the name assigned by a route pre-handler methods function. The values are the raw values provided to the continuation function as argument. For the wrapped response object, use responses.
+     * An object where each key is the name assigned by a route pre-handler methods function. The values are the raw values provided to the continuation function as argument. For the wrapped response
+     * object, use responses.
      */
     readonly pre: Util.Dictionary<object>;
 
     /**
      * Access: read / write (see limitations below).
-     * The response object when set. The object can be modified but must not be assigned another object. To replace the response with another from within an extension point, use reply(response) to override with a different response. Contains null when no response has been set (e.g. when a request terminates prematurely when the client disconnects).
+     * The response object when set. The object can be modified but must not be assigned another object. To replace the response with another from within an extension point, use reply(response) to
+     * override with a different response. Contains null when no response has been set (e.g. when a request terminates prematurely when the client disconnects).
      */
     response: ResponseObject | null;
 
@@ -448,7 +461,8 @@ export interface Request extends Podium {
     readonly preResponses: Util.Dictionary<object>;
 
     /**
-     * By default the object outputted from node's URL parse() method. Might also be set indirectly via request.setUrl in which case it may be a string (if url is set to an object with the query attribute as an unparsed string).
+     * By default the object outputted from node's URL parse() method. Might also be set indirectly via request.setUrl in which case it may be a string (if url is set to an object with the query
+     * attribute as an unparsed string).
      */
     readonly query: any;
 
@@ -492,13 +506,16 @@ export interface Request extends Podium {
      * @return ResponseObject
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-requestgenerateresponsesource-options)
      */
-    generateResponse(source: string | object | null, options?: {variety?: string; prepare?: (response: ResponseObject) => Promise<ResponseObject>; marshal?: (response: ResponseObject) => Promise<ResponseValue>; close?: (response: ResponseObject) => void; }): ResponseObject;
+    /* tslint:disable-next-line:max-line-length */
+    generateResponse(source: string | object | null, options?: { variety?: string; prepare?: (response: ResponseObject) => Promise<ResponseObject>; marshal?: (response: ResponseObject) => Promise<ResponseValue>; close?: (response: ResponseObject) => void; }): ResponseObject;
 
     /**
      * Logs request-specific events. When called, the server emits a 'request' event which can be used by other listeners or plugins. The arguments are:
-     * @param tags - a string or an array of strings (e.g. ['error', 'database', 'read']) used to identify the event. Tags are used instead of log levels and provide a much more expressive mechanism for describing and filtering events.
-     * @param data - (optional) an message string or object with the application data being logged. If data is a function, the function signature is function() and it called once to generate (return value) the actual data emitted to the listeners.
-     * Any logs generated by the server internally will be emitted only on the 'request-internal' channel and will include the event.internal flag set to true.
+     * @param tags - a string or an array of strings (e.g. ['error', 'database', 'read']) used to identify the event. Tags are used instead of log levels and provide a much more expressive mechanism
+     *     for describing and filtering events.
+     * @param data - (optional) an message string or object with the application data being logged. If data is a function, the function signature is function() and it called once to generate (return
+     *     value) the actual data emitted to the listeners. Any logs generated by the server internally will be emitted only on the 'request-internal' channel and will include the event.internal flag
+     *     set to true.
      * @return void
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-requestlogtags-data)
      */
@@ -516,7 +533,8 @@ export interface Request extends Podium {
     /**
      * Changes the request URI before the router begins processing the request where:
      * Can only be called from an 'onRequest' extension method.
-     * @param url - the new request URI. If url is a string, it is parsed with node's URL parse() method with parseQueryString set to true. url can also be set to an object compatible with node's URL parse() method output.
+     * @param url - the new request URI. If url is a string, it is parsed with node's URL parse() method with parseQueryString set to true. url can also be set to an object compatible with node's URL
+     *     parse() method output.
      * @param stripTrailingSlash - if true, strip the trailing slash from the path. Defaults to false.
      * @return void
      * [See docs](https://hapijs.com/api/17.0.1#-requestseturlurl-striptrailingslash)
@@ -534,7 +552,7 @@ export interface Request extends Podium {
  +                                                                           +
  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
- /**
+/**
  * Access: read only and the public podium interface.
  * The response.events object supports the following events:
  * * 'peek' - emitted for each chunk of data written back to the client connection. The event method signature is function(chunk, encoding).
@@ -542,20 +560,21 @@ export interface Request extends Podium {
  * [See docs](https://hapijs.com/api/17.0.1#-responseevents)
  */
 export interface ResponseEvents extends Podium {
-
     /**
      * 'peek' - emitted for each chunk of data written back to the client connection. The event method signature is function(chunk, encoding).
      * 'finish' - emitted when the response finished writing but before the client response connection is ended. The event method signature is function ().
      */
     on(criteria: 'peek', listener: PeekListener): void;
-    on(criteria: 'finish', listener: (data: void) => void): void;
+
+    on(criteria: 'finish', listener: (data: undefined) => void): void;
 
     /**
      * 'peek' - emitted for each chunk of data written back to the client connection. The event method signature is function(chunk, encoding).
      * 'finish' - emitted when the response finished writing but before the client response connection is ended. The event method signature is function ().
      */
     once(criteria: 'peek', listener: PeekListener): void;
-    once(criteria: 'finish', listener: (data: void) => void): void;
+
+    once(criteria: 'finish', listener: (data: undefined) => void): void;
 }
 
 /**
@@ -582,7 +601,6 @@ export interface ResponseObjectHeaderOptions {
  * TODO, check extending from Podium is correct.  Extending because of "The response object supports the following events" [See docs](https://hapijs.com/api/17.0.1#-responseevents)
  */
 export interface ResponseObject extends Podium {
-
     /**
      * Default value: {}.
      * Application-specific state. Provides a safe place to store application data without potential conflicts with the framework. Should not be used by plugins which should use plugins[name].
@@ -703,7 +721,8 @@ export interface ResponseObject extends Podium {
      * @param tag - the entity tag string without the double-quote.
      * @param options - (optional) settings where:
      *  * weak - if true, the tag will be prefixed with the 'W/' weak signifier. Weak tags will fail to match identical tags for the purpose of determining 304 response status. Defaults to false.
-     *  * vary - if true and content encoding is set or applied to the response (e.g 'gzip' or 'deflate'), the encoding name will be automatically added to the tag at transmission time (separated by a '-' character). Ignored when weak is true. Defaults to true.
+     *  * vary - if true and content encoding is set or applied to the response (e.g 'gzip' or 'deflate'), the encoding name will be automatically added to the tag at transmission time (separated by
+     *     a '-' character). Ignored when weak is true. Defaults to true.
      * @return Return value: the current response object.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-responseetagtag-options)
      */
@@ -760,7 +779,8 @@ export interface ResponseObject extends Podium {
      * Sets an HTTP cookie where:
      * @param name - the cookie name.
      * @param value - the cookie value. If no options.encoding is defined, must be a string. See server.state() for supported encoding values.
-     * @param options - (optional) configuration. If the state was previously registered with the server using server.state(), the specified keys in options are merged with the default server definition.
+     * @param options - (optional) configuration. If the state was previously registered with the server using server.state(), the specified keys in options are merged with the default server
+     *     definition.
      * @return Return value: the current response object.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-responsestatename-value-options)
      */
@@ -794,7 +814,8 @@ export interface ResponseObject extends Podium {
     /**
      * Clears the HTTP cookie by setting an expired value where:
      * @param name - the cookie name.
-     * @param options - (optional) configuration for expiring cookie. If the state was previously registered with the server using server.state(), the specified options are merged with the server definition.
+     * @param options - (optional) configuration for expiring cookie. If the state was previously registered with the server using server.state(), the specified options are merged with the server
+     *     definition.
      * @return Return value: the current response object.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-responseunstatename-options)
      */
@@ -834,14 +855,14 @@ export interface ResponseObject extends Podium {
     permanent(isPermanent: boolean): ResponseObject;
 
     /**
-     * Sets the status code to 301/302 for rewritable (allows changing the request method from 'POST' to 'GET') or 307/308 for non-rewritable (does not allow changing the request method from 'POST' to 'GET'). Exact code based on the response.temporary() or response.permanent() setting. Arguments:
+     * Sets the status code to 301/302 for rewritable (allows changing the request method from 'POST' to 'GET') or 307/308 for non-rewritable (does not allow changing the request method from 'POST'
+     * to 'GET'). Exact code based on the response.temporary() or response.permanent() setting. Arguments:
      * @param isRewritable - if false, sets to non-rewritable. Defaults to true.
      * @return Return value: the current response object.
      * Only available after calling the response.redirect() method.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-responserewritableisrewritable)
      */
     rewritable(isRewritable: boolean): ResponseObject;
-
 }
 
 /**
@@ -849,7 +870,6 @@ export interface ResponseObject extends Podium {
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-responsesettings)
  */
 export interface ResponseSettings {
-
     /**
      * Defaults value: true.
      * If true and source is a Stream, copies the statusCode and headers properties of the stream object to the outbound response.
@@ -873,7 +893,6 @@ export interface ResponseSettings {
      * If true, a suffix will be automatically added to the 'ETag' header at transmission time (separated by a '-' character) when the HTTP 'Vary' header is present.
      */
     varyEtag: boolean;
-
 }
 
 /**
@@ -897,7 +916,6 @@ export interface AuthenticationData {
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#response-toolkit)
  */
 export interface ResponseToolkit {
-
     /**
      * A response symbol. When returned by a lifecycle method, the request lifecycle skips to the finalizing step
      * without further interaction with the node response stream. It is the developer's responsibility to write
@@ -933,7 +951,7 @@ export interface ResponseToolkit {
      * The [request] object. This is a duplication of the request lifecycle method argument used by
      * [toolkit decorations](https://github.com/hapijs/hapi/blob/master/API.md#server.decorate()) to access the current request.
      */
-    readonly request: Readonly<Request>
+    readonly request: Readonly<Request>;
 
     /**
      * Used by the [authentication] method to pass back valid credentials where:
@@ -1011,7 +1029,6 @@ export interface ResponseToolkit {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-hunstatename-options)
      */
     unstate(name: string, options?: ServerStateCookieOptions): void;
-
 }
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -1024,7 +1041,7 @@ export interface ResponseToolkit {
  +                                                                           +
  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
- export type RouteOptionsAccessScope = false | string | string[];
+export type RouteOptionsAccessScope = false | string | string[];
 
 export type RouteOptionsAccessEntity = 'any' | 'user' | 'app';
 
@@ -1036,25 +1053,29 @@ export interface RouteOptionsAccessEntityObject {
     entity: RouteOptionsAccessEntity;
 }
 
-export type RouteOptionsAccessObject = RouteOptionsAccessScopeObject | RouteOptionsAccessEntityObject | (RouteOptionsAccessScopeObject & RouteOptionsAccessEntityObject);
+export type RouteOptionsAccessObject =
+    RouteOptionsAccessScopeObject
+    | RouteOptionsAccessEntityObject
+    | (RouteOptionsAccessScopeObject & RouteOptionsAccessEntityObject);
 
 /**
  * Route Authentication Options
  */
 export interface RouteOptionsAccess {
-
     /**
      * Default value: none.
-     * An object or array of objects specifying the route access rules. Each rule is evaluated against an incoming request and access is granted if at least one of the rules matches. Each rule object must include at least one of scope or entity.
+     * An object or array of objects specifying the route access rules. Each rule is evaluated against an incoming request and access is granted if at least one of the rules matches. Each rule object
+     * must include at least one of scope or entity.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsauthaccess)
      */
     access?: RouteOptionsAccessObject | RouteOptionsAccessObject[];
 
     /**
      * Default value: false (no scope requirements).
-     * The application scope required to access the route. Value can be a scope string or an array of scope strings. When authenticated, the credentials object scope property must contain at least one of the scopes defined to access the route.
-     * If a scope string begins with a + character, that scope is required. If a scope string begins with a ! character, that scope is forbidden. For example, the scope ['!a', '+b', 'c', 'd'] means the incoming request credentials' scope must not include 'a', must include 'b', and must include one of 'c' or 'd'.
-     * You may also access properties on the request object (query, params, payload, and credentials) to populate a dynamic scope by using the '{' and '}' characters around the property name, such as 'user-{params.id}'.
+     * The application scope required to access the route. Value can be a scope string or an array of scope strings. When authenticated, the credentials object scope property must contain at least
+     * one of the scopes defined to access the route. If a scope string begins with a + character, that scope is required. If a scope string begins with a ! character, that scope is forbidden. For
+     * example, the scope ['!a', '+b', 'c', 'd'] means the incoming request credentials' scope must not include 'a', must include 'b', and must include one of 'c' or 'd'. You may also access
+     * properties on the request object (query, params, payload, and credentials) to populate a dynamic scope by using the '{' and '}' characters around the property name, such as 'user-{params.id}'.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsauthaccessscope)
      */
     scope?: RouteOptionsAccessScope;
@@ -1064,7 +1085,8 @@ export interface RouteOptionsAccess {
      * The required authenticated entity type. If set, must match the entity value of the request authenticated credentials. Available values:
      * * 'any' - the authentication can be on behalf of a user or application.
      * * 'user' - the authentication must be on behalf of a user which is identified by the presence of a 'user' attribute in the credentials object returned by the authentication strategy.
-     * * 'app' - the authentication must be on behalf of an application which is identified by the lack of presence of a user attribute in the credentials object returned by the authentication strategy.
+     * * 'app' - the authentication must be on behalf of an application which is identified by the lack of presence of a user attribute in the credentials object returned by the authentication
+     * strategy.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsauthaccessentity)
      */
     entity?: RouteOptionsAccessEntity;
@@ -1081,8 +1103,8 @@ export interface RouteOptionsAccess {
 
     /**
      * Default value: false, unless the scheme requires payload authentication.
-     * If set, the incoming request payload is authenticated after it is processed. Requires a strategy with payload authentication support (e.g. Hawk). Cannot be set to a value other than 'required' when the scheme sets the authentication options.payload to true.
-     * Available values:
+     * If set, the incoming request payload is authenticated after it is processed. Requires a strategy with payload authentication support (e.g. Hawk). Cannot be set to a value other than 'required'
+     * when the scheme sets the authentication options.payload to true. Available values:
      * * false - no payload authentication.
      * * 'required' - payload authentication required.
      * * 'optional' - payload authentication performed only when the client includes payload authentication information (e.g. hash attribute in Hawk).
@@ -1103,7 +1125,6 @@ export interface RouteOptionsAccess {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsauthstrategy)
      */
     strategy?: string;
-
 }
 
 /**
@@ -1123,22 +1144,26 @@ export type RouteOptionsCache = {
     otherwise?: string;
 } & (
     {
-    expiresIn?: number;
-    expiresAt?: undefined;
+        expiresIn?: number;
+        expiresAt?: undefined;
     } | {
     expiresIn?: undefined;
     expiresAt?: string;
-    } | {
+} | {
     expiresIn?: undefined;
     expiresAt?: undefined;
-    }
-);
+}
+    );
 
 /**
  * Default value: false (no CORS headers).
- * The Cross-Origin Resource Sharing protocol allows browsers to make cross-origin API calls. CORS is required by web applications running inside a browser which are loaded from a different domain than the API server. To enable, set cors to true, or to an object with the following options:
- * * origin - an array of allowed origin servers strings ('Access-Control-Allow-Origin'). The array can contain any combination of fully qualified origins along with origin strings containing a wildcard '*' character, or a single '*' origin string. If set to 'ignore', any incoming Origin header is ignored (present or not) and the 'Access-Control-Allow-Origin' header is set to '*'. Defaults to any origin ['*'].
- * * maxAge - number of seconds the browser should cache the CORS response ('Access-Control-Max-Age'). The greater the value, the longer it will take before the browser checks for changes in policy. Defaults to 86400 (one day).
+ * The Cross-Origin Resource Sharing protocol allows browsers to make cross-origin API calls. CORS is required by web applications running inside a browser which are loaded from a different domain
+ * than the API server. To enable, set cors to true, or to an object with the following options:
+ * * origin - an array of allowed origin servers strings ('Access-Control-Allow-Origin'). The array can contain any combination of fully qualified origins along with origin strings containing a
+ * wildcard '*' character, or a single '*' origin string. If set to 'ignore', any incoming Origin header is ignored (present or not) and the 'Access-Control-Allow-Origin' header is set to '*'.
+ * Defaults to any origin ['*'].
+ * * maxAge - number of seconds the browser should cache the CORS response ('Access-Control-Max-Age'). The greater the value, the longer it will take before the browser checks for changes in policy.
+ * Defaults to 86400 (one day).
  * * headers - a strings array of allowed headers ('Access-Control-Allow-Headers'). Defaults to ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'].
  * * additionalHeaders - a strings array of additional headers to headers. Use this to keep the default headers in place.
  * * exposedHeaders - a strings array of exposed headers ('Access-Control-Expose-Headers'). Defaults to ['WWW-Authenticate', 'Server-Authorization'].
@@ -1148,11 +1173,14 @@ export type RouteOptionsCache = {
  */
 export interface RouteOptionsCors {
     /**
-     * an array of allowed origin servers strings ('Access-Control-Allow-Origin'). The array can contain any combination of fully qualified origins along with origin strings containing a wildcard '*' character, or a single '*' origin string. If set to 'ignore', any incoming Origin header is ignored (present or not) and the 'Access-Control-Allow-Origin' header is set to '*'. Defaults to any origin ['*'].
+     * an array of allowed origin servers strings ('Access-Control-Allow-Origin'). The array can contain any combination of fully qualified origins along with origin strings containing a wildcard '*'
+     * character, or a single '*' origin string. If set to 'ignore', any incoming Origin header is ignored (present or not) and the 'Access-Control-Allow-Origin' header is set to '*'. Defaults to any
+     * origin ['*'].
      */
-    origin?: string[] | '*'| 'ignore';
+    origin?: string[] | '*' | 'ignore';
     /**
-     * number of seconds the browser should cache the CORS response ('Access-Control-Max-Age'). The greater the value, the longer it will take before the browser checks for changes in policy. Defaults to 86400 (one day).
+     * number of seconds the browser should cache the CORS response ('Access-Control-Max-Age'). The greater the value, the longer it will take before the browser checks for changes in policy.
+     * Defaults to 86400 (one day).
      */
     maxAge?: number;
     /**
@@ -1179,15 +1207,21 @@ export interface RouteOptionsCors {
 
 /**
  * The value must be one of:
- * * 'data' - the incoming payload is read fully into memory. If parse is true, the payload is parsed (JSON, form-decoded, multipart) based on the 'Content-Type' header. If parse is false, a raw Buffer is returned.
- * * 'stream' - the incoming payload is made available via a Stream.Readable interface. If the payload is 'multipart/form-data' and parse is true, field values are presented as text while files are provided as streams. File streams from a 'multipart/form-data' upload will also have a hapi property containing the filename and headers properties. Note that payload streams for multipart payloads are a synthetic interface created on top of the entire mutlipart content loaded into memory. To avoid loading large multipart payloads into memory, set parse to false and handle the multipart payload in the handler using a streaming parser (e.g. pez).
- * * 'file' - the incoming payload is written to temporary file in the directory specified by the uploads settings. If the payload is 'multipart/form-data' and parse is true, field values are presented as text while files are saved to disk. Note that it is the sole responsibility of the application to clean up the files generated by the framework. This can be done by keeping track of which files are used (e.g. using the request.app object), and listening to the server 'response' event to perform cleanup.
- * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayloadoutput)
+ * * 'data' - the incoming payload is read fully into memory. If parse is true, the payload is parsed (JSON, form-decoded, multipart) based on the 'Content-Type' header. If parse is false, a raw
+ * Buffer is returned.
+ * * 'stream' - the incoming payload is made available via a Stream.Readable interface. If the payload is 'multipart/form-data' and parse is true, field values are presented as text while files are
+ * provided as streams. File streams from a 'multipart/form-data' upload will also have a hapi property containing the filename and headers properties. Note that payload streams for multipart
+ * payloads are a synthetic interface created on top of the entire mutlipart content loaded into memory. To avoid loading large multipart payloads into memory, set parse to false and handle the
+ * multipart payload in the handler using a streaming parser (e.g. pez).
+ * * 'file' - the incoming payload is written to temporary file in the directory specified by the uploads settings. If the payload is 'multipart/form-data' and parse is true, field values are
+ * presented as text while files are saved to disk. Note that it is the sole responsibility of the application to clean up the files generated by the framework. This can be done by keeping track of
+ * which files are used (e.g. using the request.app object), and listening to the server 'response' event to perform cleanup. For context [See
+ * docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayloadoutput)
  */
 export type PayloadOutput = 'data' | 'stream' | 'file';
 
 /**
-  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayloadcompression)
+ * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayloadcompression)
  */
 export type PayloadCompressionDecoderSettings = object;
 
@@ -1196,7 +1230,6 @@ export type PayloadCompressionDecoderSettings = object;
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayload)
  */
 export interface RouteOptionsPayload {
-
     /**
      * Default value: allows parsing of the following mime types:
      * * application/json
@@ -1205,7 +1238,8 @@ export interface RouteOptionsPayload {
      * * application/x-www-form-urlencoded
      * * multipart/form-data
      * * text/*
-     * A string or an array of strings with the allowed mime types for the endpoint. Use this settings to limit the set of allowed mime types. Note that allowing additional mime types not listed above will not enable them to be parsed, and if parse is true, the request will result in an error response.
+     * A string or an array of strings with the allowed mime types for the endpoint. Use this settings to limit the set of allowed mime types. Note that allowing additional mime types not listed
+     * above will not enable them to be parsed, and if parse is true, the request will result in an error response.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayloadallow)
      */
     allow?: string | string[];
@@ -1257,9 +1291,15 @@ export interface RouteOptionsPayload {
     /**
      * Default value: 'data'.
      * The processed payload format. The value must be one of:
-     * * 'data' - the incoming payload is read fully into memory. If parse is true, the payload is parsed (JSON, form-decoded, multipart) based on the 'Content-Type' header. If parse is false, a raw Buffer is returned.
-     * * 'stream' - the incoming payload is made available via a Stream.Readable interface. If the payload is 'multipart/form-data' and parse is true, field values are presented as text while files are provided as streams. File streams from a 'multipart/form-data' upload will also have a hapi property containing the filename and headers properties. Note that payload streams for multipart payloads are a synthetic interface created on top of the entire mutlipart content loaded into memory. To avoid loading large multipart payloads into memory, set parse to false and handle the multipart payload in the handler using a streaming parser (e.g. pez).
-     * * 'file' - the incoming payload is written to temporary file in the directory specified by the uploads settings. If the payload is 'multipart/form-data' and parse is true, field values are presented as text while files are saved to disk. Note that it is the sole responsibility of the application to clean up the files generated by the framework. This can be done by keeping track of which files are used (e.g. using the request.app object), and listening to the server 'response' event to perform cleanup.
+     * * 'data' - the incoming payload is read fully into memory. If parse is true, the payload is parsed (JSON, form-decoded, multipart) based on the 'Content-Type' header. If parse is false, a raw
+     * Buffer is returned.
+     * * 'stream' - the incoming payload is made available via a Stream.Readable interface. If the payload is 'multipart/form-data' and parse is true, field values are presented as text while files
+     * are provided as streams. File streams from a 'multipart/form-data' upload will also have a hapi property containing the filename and headers properties. Note that payload streams for multipart
+     * payloads are a synthetic interface created on top of the entire mutlipart content loaded into memory. To avoid loading large multipart payloads into memory, set parse to false and handle the
+     * multipart payload in the handler using a streaming parser (e.g. pez).
+     * * 'file' - the incoming payload is written to temporary file in the directory specified by the uploads settings. If the payload is 'multipart/form-data' and parse is true, field values are
+     * presented as text while files are saved to disk. Note that it is the sole responsibility of the application to clean up the files generated by the framework. This can be done by keeping track
+     * of which files are used (e.g. using the request.app object), and listening to the server 'response' event to perform cleanup.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayloadoutput)
      */
     output?: PayloadOutput;
@@ -1274,7 +1314,8 @@ export interface RouteOptionsPayload {
     /**
      * Default value: true.
      * Determines if the incoming payload is processed or presented raw. Available values:
-     * * true - if the request 'Content-Type' matches the allowed mime types set by allow (for the whole payload as well as parts), the payload is converted into an object when possible. If the format is unknown, a Bad Request (400) error response is sent. Any known content encoding is decoded.
+     * * true - if the request 'Content-Type' matches the allowed mime types set by allow (for the whole payload as well as parts), the payload is converted into an object when possible. If the
+     * format is unknown, a Bad Request (400) error response is sent. Any known content encoding is decoded.
      * * false - the raw payload is returned unmodified.
      * * 'gunzip' - the raw payload is returned unmodified after any known content encoding is decoded.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayloadparse)
@@ -1283,8 +1324,8 @@ export interface RouteOptionsPayload {
 
     /**
      * Default value: to 10000 (10 seconds).
-     * Payload reception timeout in milliseconds. Sets the maximum time allowed for the client to transmit the request payload (body) before giving up and responding with a Request Timeout (408) error response.
-     * Set to false to disable.
+     * Payload reception timeout in milliseconds. Sets the maximum time allowed for the client to transmit the request payload (body) before giving up and responding with a Request Timeout (408)
+     * error response. Set to false to disable.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayloadtimeout)
      */
     timeout?: false | number;
@@ -1295,7 +1336,6 @@ export interface RouteOptionsPayload {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspayloaduploads)
      */
     uploads?: string;
-
 }
 
 /**
@@ -1334,17 +1374,20 @@ export interface ValidationObject {
     [key: string]: AnySchema;
 }
 
-export type RouteOptionsResponseSchema = boolean | ValidationObject | ((value: object | Buffer | string, options: ValidationOptions) => Promise<any>);
+export type RouteOptionsResponseSchema =
+    boolean
+    | ValidationObject
+    | ((value: object | Buffer | string, options: ValidationOptions) => Promise<any>);
 
 /**
  * Processing rules for the outgoing response.
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsresponse)
  */
 export interface RouteOptionsResponse {
-
     /**
      * Default value: 200.
-     * The default HTTP status code when the payload is considered empty. Value can be 200 or 204. Note that a 200 status code is converted to a 204 only at the time of response transmission (the response status code will remain 200 throughout the request lifecycle unless manually set).
+     * The default HTTP status code when the payload is considered empty. Value can be 200 or 204. Note that a 200 status code is converted to a 204 only at the time of response transmission (the
+     * response status code will remain 200 throughout the request lifecycle unless manually set).
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsresponseemptystatuscode)
      */
     emptyStatusCode?: 200 | 204;
@@ -1365,7 +1408,8 @@ export interface RouteOptionsResponse {
 
     /**
      * Default value: none.
-     * [joi](http://github.com/hapijs/joi) options object pass to the validation function. Useful to set global options such as stripUnknown or abortEarly (the complete list is available here). If a custom validation function is defined via schema or status then options can an arbitrary object that will be passed to this function as the second argument.
+     * [joi](http://github.com/hapijs/joi) options object pass to the validation function. Useful to set global options such as stripUnknown or abortEarly (the complete list is available here). If a
+     * custom validation function is defined via schema or status then options can an arbitrary object that will be passed to this function as the second argument.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsresponseoptions)
      */
     options?: ValidationOptions; // TODO needs validation
@@ -1393,7 +1437,8 @@ export interface RouteOptionsResponse {
      * * a validation function using the signature async function(value, options) where:
      * * * value - the pending response payload.
      * * * options - The options along with the request context ({ headers, params, query, payload, app, auth }).
-     * * * if the function returns a value and modify is true, the value is used as the new response. If the original response is an error, the return value is used to override the original error output.payload. If an error is thrown, the error is processed according to failAction.
+     * * * if the function returns a value and modify is true, the value is used as the new response. If the original response is an error, the return value is used to override the original error
+     * output.payload. If an error is thrown, the error is processed according to failAction.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsresponseschema)
      */
     schema?: RouteOptionsResponseSchema;
@@ -1405,7 +1450,6 @@ export interface RouteOptionsResponse {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsresponsestatus)
      */
     status?: Util.Dictionary<RouteOptionsResponseSchema>;
-
 }
 
 /**
@@ -1427,9 +1471,11 @@ export interface RouteOptionsResponse {
  * * * * * 'deny'
  * * * * * 'sameorigin'
  * * * * * 'allow-from'
- * * * * source - when rule is 'allow-from' this is used to form the rest of the header, otherwise this field is ignored. If rule is 'allow-from' but source is unset, the rule will be automatically changed to 'sameorigin'.
+ * * * * source - when rule is 'allow-from' this is used to form the rest of the header, otherwise this field is ignored. If rule is 'allow-from' but source is unset, the rule will be automatically
+ * changed to 'sameorigin'.
  * * xss - boolean that controls the 'X-XSS-PROTECTION' header for Internet Explorer. Defaults to true which sets the header to equal '1; mode=block'.
- *       Note: this setting can create a security vulnerability in versions of Internet Exploere below 8, as well as unpatched versions of IE8. See here and here for more information. If you actively support old versions of IE, it may be wise to explicitly set this flag to false.
+ *       Note: this setting can create a security vulnerability in versions of Internet Exploere below 8, as well as unpatched versions of IE8. See here and here for more information. If you actively
+ * support old versions of IE, it may be wise to explicitly set this flag to false.
  * * noOpen - boolean controlling the 'X-Download-Options' header for Internet Explorer, preventing downloads from executing in your context. Defaults to true setting the header to 'noopen'.
  * * noSniff - boolean controlling the 'X-Content-Type-Options' header. Defaults to true setting the header to its only and default option, 'nosniff'.
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionssecurity)
@@ -1461,13 +1507,15 @@ export interface RouteOptionsSecureObject {
          */
         rule: 'deny' | 'sameorigin' | 'allow-from';
         /**
-         * when rule is 'allow-from' this is used to form the rest of the header, otherwise this field is ignored. If rule is 'allow-from' but source is unset, the rule will be automatically changed to 'sameorigin'.
+         * when rule is 'allow-from' this is used to form the rest of the header, otherwise this field is ignored. If rule is 'allow-from' but source is unset, the rule will be automatically changed
+         * to 'sameorigin'.
          */
         source: string;
     };
     /**
      * boolean that controls the 'X-XSS-PROTECTION' header for Internet Explorer. Defaults to true which sets the header to equal '1; mode=block'.
-     * Note: this setting can create a security vulnerability in versions of Internet Exploere below 8, as well as unpatched versions of IE8. See here and here for more information. If you actively support old versions of IE, it may be wise to explicitly set this flag to false.
+     * Note: this setting can create a security vulnerability in versions of Internet Exploere below 8, as well as unpatched versions of IE8. See here and here for more information. If you actively
+     * support old versions of IE, it may be wise to explicitly set this flag to false.
      */
     xss: boolean;
     /**
@@ -1480,7 +1528,6 @@ export interface RouteOptionsSecureObject {
     noSniff?: boolean;
 }
 
-
 export type RouteOptionsSecure = boolean | RouteOptionsSecureObject;
 
 /**
@@ -1489,7 +1536,6 @@ export type RouteOptionsSecure = boolean | RouteOptionsSecureObject;
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsvalidate)
  */
 export interface RouteOptionsValidate {
-
     /**
      * Default value: none.
      * An optional object with error fields copied into every validation error response.
@@ -1512,8 +1558,8 @@ export interface RouteOptionsValidate {
      * * a validation function using the signature async function(value, options) where:
      * * * value - the request.headers object containing the request headers.
      * * * options - options.
-     * * * if a value is returned, the value is used as the new request.headers value and the original value is stored in request.orig.headers. Otherwise, the headers are left unchanged. If an error is thrown, the error is handled according to failAction.
-     * Note that all header field names must be in lowercase to match the headers normalized by node.
+     * * * if a value is returned, the value is used as the new request.headers value and the original value is stored in request.orig.headers. Otherwise, the headers are left unchanged. If an error
+     * is thrown, the error is handled according to failAction. Note that all header field names must be in lowercase to match the headers normalized by node.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsvalidateheaders)
      */
     headers?: RouteOptionsResponseSchema;
@@ -1522,9 +1568,11 @@ export interface RouteOptionsValidate {
      * Default value: none.
      * An options object passed to the joi rules or the custom validation methods. Used for setting global options such as stripUnknown or abortEarly (the complete list is available here).
      * If a custom validation function (see headers, params, query, or payload above) is defined then options can an arbitrary object that will be passed to this function as the second parameter.
-     * The values of the other inputs (i.e. headers, query, params, payload, app, and auth) are added to the options object under the validation context (accessible in rules as Joi.ref('$query.key')).
-     * Note that validation is performed in order (i.e. headers, params, query, and payload) and if type casting is used (e.g. converting a string to a number), the value of inputs not yet validated will reflect the raw, unvalidated and unmodified values.
-     * If the validation rules for headers, params, query, and payload are defined at both the server routes level and at the route level, the individual route settings override the routes defaults (the rules are not merged).
+     * The values of the other inputs (i.e. headers, query, params, payload, app, and auth) are added to the options object under the validation context (accessible in rules as
+     * Joi.ref('$query.key')).
+     * Note that validation is performed in order (i.e. headers, params, query, and payload) and if type casting is used (e.g. converting a string to a number), the value of inputs not yet validated
+     * will reflect the raw, unvalidated and unmodified values. If the validation rules for headers, params, query, and payload are defined at both the server routes level and at the route level, the
+     * individual route settings override the routes defaults (the rules are not merged).
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsvalidateparams)
      */
     options?: ValidationOptions | object;
@@ -1537,8 +1585,8 @@ export interface RouteOptionsValidate {
      * * a validation function using the signature async function(value, options) where:
      * * * value - the request.params object containing the request path parameters.
      * * * options - options.
-     * if a value is returned, the value is used as the new request.params value and the original value is stored in request.orig.params. Otherwise, the path parameters are left unchanged. If an error is thrown, the error is handled according to failAction.
-     * Note that failing to match the validation rules to the route path parameters definition will cause all requests to fail.
+     * if a value is returned, the value is used as the new request.params value and the original value is stored in request.orig.params. Otherwise, the path parameters are left unchanged. If an
+     * error is thrown, the error is handled according to failAction. Note that failing to match the validation rules to the route path parameters definition will cause all requests to fail.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsvalidateparams)
      */
     params?: RouteOptionsResponseSchema;
@@ -1547,30 +1595,32 @@ export interface RouteOptionsValidate {
      * Default value: true (no validation).
      * Validation rules for incoming request payload (request body), where:
      * * true - any payload allowed (no validation performed). false - no payload allowed.
-     * * a joi validation object. Note that empty payloads are represented by a null value. If a validation schema is provided and empty payload are allowed, the schema must be explicitly defined by setting the rule to a joi schema with null allowed (e.g. Joi.object({  keys here  }).allow(null)).
+     * * a joi validation object. Note that empty payloads are represented by a null value. If a validation schema is provided and empty payload are allowed, the schema must be explicitly defined by
+     * setting the rule to a joi schema with null allowed (e.g. Joi.object({  keys here  }).allow(null)).
      * * a validation function using the signature async function(value, options) where:
      * * * value - the request.query object containing the request query parameters.
      * * * options - options.
-     * if a value is returned, the value is used as the new request.payload value and the original value is stored in request.orig.payload. Otherwise, the payload is left unchanged. If an error is thrown, the error is handled according to failAction.
-     * Note that validating large payloads and modifying them will cause memory duplication of the payload (since the original is kept), as well as the significant performance cost of validating large amounts of data.
+     * if a value is returned, the value is used as the new request.payload value and the original value is stored in request.orig.payload. Otherwise, the payload is left unchanged. If an error is
+     * thrown, the error is handled according to failAction. Note that validating large payloads and modifying them will cause memory duplication of the payload (since the original is kept), as well
+     * as the significant performance cost of validating large amounts of data.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsvalidatepayload)
      */
     payload?: RouteOptionsResponseSchema;
 
     /**
      * Default value: true (no validation).
-     * Validation rules for incoming request URI query component (the key-value part of the URI between '?' and '#'). The query is parsed into its individual key-value pairs, decoded, and stored in request.query prior to validation. Where:
+     * Validation rules for incoming request URI query component (the key-value part of the URI between '?' and '#'). The query is parsed into its individual key-value pairs, decoded, and stored in
+     * request.query prior to validation. Where:
      * * true - any query parameter value allowed (no validation performed). false - no query parameter value allowed.
      * * a joi validation object.
      * * a validation function using the signature async function(value, options) where:
      * * * value - the request.query object containing the request query parameters.
      * * * options - options.
-     * if a value is returned, the value is used as the new request.query value and the original value is stored in request.orig.query. Otherwise, the query parameters are left unchanged. If an error is thrown, the error is handled according to failAction.
-     * Note that changes to the query parameters will not be reflected in request.url.
+     * if a value is returned, the value is used as the new request.query value and the original value is stored in request.orig.query. Otherwise, the query parameters are left unchanged. If an error
+     * is thrown, the error is handled according to failAction. Note that changes to the query parameters will not be reflected in request.url.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsvalidatequery)
      */
     query?: RouteOptionsResponseSchema;
-
 }
 
 /**
@@ -1584,7 +1634,6 @@ export type RouteCompressionEncoderSettings = object;
  * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#route-options)
  */
 export interface RouteOptions {
-
     /**
      * Application-specific route configuration state. Should not be used by plugins which should use options.plugins[name] instead.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsapp)
@@ -1631,9 +1680,13 @@ export interface RouteOptions {
 
     /**
      * Default value: false (no CORS headers).
-     * The Cross-Origin Resource Sharing protocol allows browsers to make cross-origin API calls. CORS is required by web applications running inside a browser which are loaded from a different domain than the API server. To enable, set cors to true, or to an object with the following options:
-     * * origin - an array of allowed origin servers strings ('Access-Control-Allow-Origin'). The array can contain any combination of fully qualified origins along with origin strings containing a wildcard '*' character, or a single '*' origin string. If set to 'ignore', any incoming Origin header is ignored (present or not) and the 'Access-Control-Allow-Origin' header is set to '*'. Defaults to any origin ['*'].
-     * * maxAge - number of seconds the browser should cache the CORS response ('Access-Control-Max-Age'). The greater the value, the longer it will take before the browser checks for changes in policy. Defaults to 86400 (one day).
+     * The Cross-Origin Resource Sharing protocol allows browsers to make cross-origin API calls. CORS is required by web applications running inside a browser which are loaded from a different
+     * domain than the API server. To enable, set cors to true, or to an object with the following options:
+     * * origin - an array of allowed origin servers strings ('Access-Control-Allow-Origin'). The array can contain any combination of fully qualified origins along with origin strings containing a
+     * wildcard '*' character, or a single '*' origin string. If set to 'ignore', any incoming Origin header is ignored (present or not) and the 'Access-Control-Allow-Origin' header is set to '*'.
+     * Defaults to any origin ['*'].
+     * * maxAge - number of seconds the browser should cache the CORS response ('Access-Control-Max-Age'). The greater the value, the longer it will take before the browser checks for changes in
+     * policy. Defaults to 86400 (one day).
      * * headers - a strings array of allowed headers ('Access-Control-Allow-Headers'). Defaults to ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'].
      * * additionalHeaders - a strings array of additional headers to headers. Use this to keep the default headers in place.
      * * exposedHeaders - a strings array of exposed headers ('Access-Control-Expose-Headers'). Defaults to ['WWW-Authenticate', 'Server-Authorization'].
@@ -1653,7 +1706,8 @@ export interface RouteOptions {
 
     /**
      * Default value: none.
-     * Route-level request extension points by setting the option to an object with a key for each of the desired extension points ('onRequest' is not allowed), and the value is the same as the server.ext(events) event argument.
+     * Route-level request extension points by setting the option to an object with a key for each of the desired extension points ('onRequest' is not allowed), and the value is the same as the
+     * server.ext(events) event argument.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsext)
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#request-lifecycle)
      */
@@ -1674,14 +1728,14 @@ export interface RouteOptions {
      */
     files?: {
         relativeTo: string;
-    }
+    };
 
     /**
      * Default value: none.
      * The route handler function performs the main business logic of the route and sets the response. handler can be assigned:
      * * a lifecycle method.
-     * * an object with a single property using the name of a handler type registred with the server.handler() method. The matching property value is passed as options to the registered handler generator.
-     * Note: handlers using a fat arrow style function cannot be bound to any bind property. Instead, the bound context is available under h.context.
+     * * an object with a single property using the name of a handler type registred with the server.handler() method. The matching property value is passed as options to the registered handler
+     * generator. Note: handlers using a fat arrow style function cannot be bound to any bind property. Instead, the bound context is available under h.context.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionshandler)
      */
     handler?: Lifecycle.Method | object;
@@ -1695,7 +1749,8 @@ export interface RouteOptions {
 
     /**
      * Default value: false.
-     * If true, the route cannot be accessed through the HTTP listener but only through the server.inject() interface with the allowInternals option set to true. Used for internal routes that should not be accessible to the outside world.
+     * If true, the route cannot be accessed through the HTTP listener but only through the server.inject() interface with the allowInternals option set to true. Used for internal routes that should
+     * not be accessible to the outside world.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsisinternal)
      */
     isInternal?: boolean;
@@ -1714,8 +1769,9 @@ export interface RouteOptions {
     /**
      * Default value: none.
      * Enables JSONP support by setting the value to the query parameter name containing the function name used to wrap the response payload.
-     * For example, if the value is 'callback', a request comes in with 'callback=me', and the JSON response is '{ "a":"b" }', the payload will be 'me({ "a":"b" });'. Cannot be used with stream responses.
-     * The 'Content-Type' response header is set to 'text/javascript' and the 'X-Content-Type-Options' response header is set to 'nosniff', and will override those headers even if explicitly set by response.type().
+     * For example, if the value is 'callback', a request comes in with 'callback=me', and the JSON response is '{ "a":"b" }', the payload will be 'me({ "a":"b" });'. Cannot be used with stream
+     * responses. The 'Content-Type' response header is set to 'text/javascript' and the 'X-Content-Type-Options' response header is set to 'nosniff', and will override those headers even if
+     * explicitly set by response.type().
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsjsonp)
      */
     jsonp?: string;
@@ -1728,7 +1784,7 @@ export interface RouteOptions {
      */
     log?: {
         collect: boolean;
-    }
+    };
 
     /**
      * Default value: none.
@@ -1753,16 +1809,20 @@ export interface RouteOptions {
 
     /**
      * Default value: none.
-     * The pre option allows defining methods for performing actions before the handler is called. These methods allow breaking the handler logic into smaller, reusable components that can be shared ascross routes, as well as provide a cleaner error handling of prerequisite operations (e.g. load required reference data from a database).
-     * pre is assigned an ordered array of methods which are called serially in order. If the pre array contains another array of methods as one of its elements, those methods are called in parallel. Note that during parallel execution, if any of the methods error, return a takeover response, or abort signal, the other parallel methods will continue to execute but will be ignored once completed.
-     * pre can be assigned a mixed array of:
+     * The pre option allows defining methods for performing actions before the handler is called. These methods allow breaking the handler logic into smaller, reusable components that can be shared
+     * ascross routes, as well as provide a cleaner error handling of prerequisite operations (e.g. load required reference data from a database). pre is assigned an ordered array of methods which
+     * are called serially in order. If the pre array contains another array of methods as one of its elements, those methods are called in parallel. Note that during parallel execution, if any of
+     * the methods error, return a takeover response, or abort signal, the other parallel methods will continue to execute but will be ignored once completed. pre can be assigned a mixed array of:
      * * an array containing the elements listed below, which are executed in parallel.
      * * an object with:
      * * * method - a lifecycle method.
      * * * assign - key name used to assign the response of the method to in request.pre and request.preResponses.
-     * * * failAction - A failAction value which determine what to do when a pre-handler method throws an error. If assign is specified and the failAction setting is not 'error', the error will be assigned.
+     * * * failAction - A failAction value which determine what to do when a pre-handler method throws an error. If assign is specified and the failAction setting is not 'error', the error will be
+     * assigned.
      * * a method function - same as including an object with a single method key.
-     * Note that pre-handler methods do not behave the same way other lifecycle methods do when a value is returned. Instead of the return value becoming the new response payload, the value is used to assign the corresponding request.pre and request.preResponses properties. Otherwise, the handling of errors, takeover response response, or abort signal behave the same as any other lifecycle methods.
+     * Note that pre-handler methods do not behave the same way other lifecycle methods do when a value is returned. Instead of the return value becoming the new response payload, the value is used
+     * to assign the corresponding request.pre and request.preResponses properties. Otherwise, the handling of errors, takeover response response, or abort signal behave the same as any other
+     * lifecycle methods.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionspre)
      */
     pre?: RouteOptionsPreArray;
@@ -1792,9 +1852,11 @@ export interface RouteOptions {
      * * * * * 'deny'
      * * * * * 'sameorigin'
      * * * * * 'allow-from'
-     * * * * source - when rule is 'allow-from' this is used to form the rest of the header, otherwise this field is ignored. If rule is 'allow-from' but source is unset, the rule will be automatically changed to 'sameorigin'.
+     * * * * source - when rule is 'allow-from' this is used to form the rest of the header, otherwise this field is ignored. If rule is 'allow-from' but source is unset, the rule will be
+     * automatically changed to 'sameorigin'.
      * * xss - boolean that controls the 'X-XSS-PROTECTION' header for Internet Explorer. Defaults to true which sets the header to equal '1; mode=block'.
-     *       Note: this setting can create a security vulnerability in versions of Internet Exploere below 8, as well as unpatched versions of IE8. See here and here for more information. If you actively support old versions of IE, it may be wise to explicitly set this flag to false.
+     *       Note: this setting can create a security vulnerability in versions of Internet Exploere below 8, as well as unpatched versions of IE8. See here and here for more information. If you
+     * actively support old versions of IE, it may be wise to explicitly set this flag to false.
      * * noOpen - boolean controlling the 'X-Download-Options' header for Internet Explorer, preventing downloads from executing in your context. Defaults to true setting the header to 'noopen'.
      * * noSniff - boolean controlling the 'X-Content-Type-Options' header. Defaults to true setting the header to its only and default option, 'nosniff'.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionssecurity)
@@ -1803,15 +1865,15 @@ export interface RouteOptions {
 
     /**
      * Default value: { parse: true, failAction: 'error' }.
-     * HTTP state management (cookies) allows the server to store information on the client which is sent back to the server with every request (as defined in RFC 6265). state supports the following options:
-     * parse - determines if incoming 'Cookie' headers are parsed and stored in the request.state object.
-     * failAction - A failAction value which determines how to handle cookie parsing errors. Defaults to 'error' (return a Bad Request (400) error response).
+     * HTTP state management (cookies) allows the server to store information on the client which is sent back to the server with every request (as defined in RFC 6265). state supports the following
+     * options: parse - determines if incoming 'Cookie' headers are parsed and stored in the request.state object. failAction - A failAction value which determines how to handle cookie parsing
+     * errors. Defaults to 'error' (return a Bad Request (400) error response).
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsstate)
      */
     state?: {
         parse?: boolean;
         failAction?: Lifecycle.FailAction;
-    }
+    };
 
     /**
      * Default value: none.
@@ -1827,9 +1889,9 @@ export interface RouteOptions {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionstimeout)
      */
     timeout?: {
-
         /**
-         * Response timeout in milliseconds. Sets the maximum time allowed for the server to respond to an incoming request before giving up and responding with a Service Unavailable (503) error response.
+         * Response timeout in milliseconds. Sets the maximum time allowed for the server to respond to an incoming request before giving up and responding with a Service Unavailable (503) error
+         * response.
          */
         server?: boolean | number;
 
@@ -1838,7 +1900,6 @@ export interface RouteOptions {
          * By default, node sockets automatically timeout after 2 minutes. Use this option to override this behavior. Set to false to disable socket timeouts.
          */
         socket?: boolean | number;
-
     };
 
     /**
@@ -1847,7 +1908,6 @@ export interface RouteOptions {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsvalidate)
      */
     validate?: RouteOptionsValidate;
-
 }
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -1860,7 +1920,7 @@ export interface RouteOptions {
  +                                                                           +
  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
- /**
+/**
  * The scheme options argument passed to server.auth.strategy() when instantiation a strategy.
  * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverauthschemename-scheme)
  */
@@ -1872,10 +1932,9 @@ export type ServerAuthSchemeOptions = object;
  * @param server - a reference to the server object the scheme is added to.
  * @param options - (optional) the scheme options argument passed to server.auth.strategy() when instantiation a strategy.
  */
-export interface ServerAuthScheme {
-    (server: Server, options?: ServerAuthSchemeOptions): ServerAuthSchemeObject;
-}
+export type ServerAuthScheme = (server: Server, options?: ServerAuthSchemeOptions) => ServerAuthSchemeObject;
 
+/* tslint:disable-next-line:no-empty-interface */
 export interface ServerAuthSchemeObjectApi {
 }
 
@@ -1884,7 +1943,6 @@ export interface ServerAuthSchemeObjectApi {
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#authentication-scheme)
  */
 export interface ServerAuthSchemeObject {
-
     /**
      * optional object which is exposed via the [server.auth.api](https://github.com/hapijs/hapi/blob/master/API.md#server.auth.api) object.
      */
@@ -1930,19 +1988,17 @@ export interface ServerAuthSchemeObject {
          */
         payload?: boolean;
     };
-
 }
 
 /**
  * An authentication configuration object using the same format as the route auth handler options.
  * For reference [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverauthdefaultoptions)
  */
+/* tslint:disable-next-line:no-empty-interface */
 export interface ServerAuthConfig extends RouteOptionsAccess {
-
 }
 
 export interface ServerAuth {
-
     /**
      * An object where each key is an authentication strategy name and the value is the exposed strategy API.
      * Available only when the authentication scheme exposes an API by returning an api key in the object
@@ -1957,7 +2013,7 @@ export interface ServerAuth {
      */
     readonly settings: {
         default: ServerAuthConfig;
-    }
+    };
 
     /**
      * Sets a default strategy which is applied to every route where:
@@ -2010,14 +2066,12 @@ export interface ServerAuth {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-serverauthteststrategy-request)
      */
     test(strategy: string, request: Request): Promise<any>;
-
 }
 
 /**
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-servercacheoptions)
  */
 export interface ServerCache {
-
     /**
      * Provisions a cache segment within the server cache facility where:
      * @param options - [catbox policy](https://github.com/hapijs/catbox#policy) configuration where:
@@ -2029,13 +2083,16 @@ export interface ServerCache {
      * - `ttl` - the cache ttl value in milliseconds. Set to `0` to skip storing in the cache. Defaults to the cache global policy.
      * * staleIn - number of milliseconds to mark an item stored in cache as stale and attempt to regenerate it when generateFunc is provided. Must be less than expiresIn.
      * * staleTimeout - number of milliseconds to wait before checking if an item is stale.
-     * * generateTimeout - number of milliseconds to wait before returning a timeout error when the generateFunc function takes too long to return a value. When the value is eventually returned, it is stored in the cache for future requests. Required if generateFunc is present. Set to false to disable timeouts which may cause all get() requests to get stuck forever.
+     * * generateTimeout - number of milliseconds to wait before returning a timeout error when the generateFunc function takes too long to return a value. When the value is eventually returned, it
+     *     is stored in the cache for future requests. Required if generateFunc is present. Set to false to disable timeouts which may cause all get() requests to get stuck forever.
      * * generateOnReadError - if false, an upstream cache read error will stop the cache.get() method from calling the generate function and will instead pass back the cache error. Defaults to true.
      * * generateIgnoreWriteError - if false, an upstream cache write error when calling cache.get() will be passed back with the generated value when calling. Defaults to true.
      * * dropOnError - if true, an error or timeout in the generateFunc causes the stale value to be evicted from the cache. Defaults to true.
-     * * pendingGenerateTimeout - number of milliseconds while generateFunc call is in progress for a given id, before a subsequent generateFunc call is allowed. Defaults to 0 (no blocking of concurrent generateFunc calls beyond staleTimeout).
+     * * pendingGenerateTimeout - number of milliseconds while generateFunc call is in progress for a given id, before a subsequent generateFunc call is allowed. Defaults to 0 (no blocking of
+     *     concurrent generateFunc calls beyond staleTimeout).
      * * cache - the cache name configured in server.cache. Defaults to the default cache.
-     * * segment - string segment name, used to isolate cached items within the cache partition. When called within a plugin, defaults to '!name' where 'name' is the plugin name. When called within a server method, defaults to '#name' where 'name' is the server method name. Required when called outside of a plugin.
+     * * segment - string segment name, used to isolate cached items within the cache partition. When called within a plugin, defaults to '!name' where 'name' is the plugin name. When called within a
+     *     server method, defaults to '#name' where 'name' is the server method name. Required when called outside of a plugin.
      * * shared - if true, allows multiple cache provisions to share the same segment. Default to false.
      * @return Catbox Policy.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-servercacheoptions)
@@ -2050,7 +2107,6 @@ export interface ServerCache {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-servercacheprovisionoptions)
      */
     provision(options: ServerOptionsCache): Promise<void>;
-
 }
 
 /**
@@ -2070,13 +2126,24 @@ export interface ServerEventsApplicationObject {
     name: string;
     /** a string or array of strings specifying the event channels available. Defaults to no channel restrictions (event updates can specify a channel or not). */
     channels?: string | string[];
-    /** if true, the data object passed to server.events.emit() is cloned before it is passed to the listeners (unless an override specified by each listener). Defaults to false (data is passed as-is). */
+    /**
+     * if true, the data object passed to server.events.emit() is cloned before it is passed to the listeners (unless an override specified by each listener). Defaults to false (data is passed as-is).
+     */
     clone?: boolean;
-    /** if true, the data object passed to server.event.emit() must be an array and the listener method is called with each array element passed as a separate argument (unless an override specified by each listener). This should only be used when the emitted data structure is known and predictable. Defaults to false (data is emitted as a single argument regardless of its type). */
+    /**
+     * if true, the data object passed to server.event.emit() must be an array and the listener method is called with each array element passed as a separate argument (unless an override specified
+     * by each listener). This should only be used when the emitted data structure is known and predictable. Defaults to false (data is emitted as a single argument regardless of its type).
+     */
     spread?: boolean;
-    /** if true and the criteria object passed to server.event.emit() includes tags, the tags are mapped to an object (where each tag string is the key and the value is true) which is appended to the arguments list at the end. A configuration override can be set by each listener. Defaults to false. */
+    /**
+     * if true and the criteria object passed to server.event.emit() includes tags, the tags are mapped to an object (where each tag string is the key and the value is true) which is appended to
+     * the arguments list at the end. A configuration override can be set by each listener. Defaults to false.
+     */
     tags?: boolean;
-    /** if true, the same event name can be registered multiple times where the second registration is ignored. Note that if the registration config is changed between registrations, only the first configuration is used. Defaults to false (a duplicate registration will throw an error). */
+    /**
+     * if true, the same event name can be registered multiple times where the second registration is ignored. Note that if the registration config is changed between registrations, only the first
+     * configuration is used. Defaults to false (a duplicate registration will throw an error).
+     */
     shared?: boolean;
 }
 
@@ -2089,11 +2156,17 @@ export interface ServerEventsApplicationObject {
 export interface ServerEventCriteria<T> {
     /** (required) the event name string. */
     name: T;
-    /** a string or array of strings specifying the event channels to subscribe to. If the event registration specified a list of allowed channels, the channels array must match the allowed channels. If channels are specified, event updates without any channel designation will not be included in the subscription. Defaults to no channels filter. */
+    /**
+     * a string or array of strings specifying the event channels to subscribe to. If the event registration specified a list of allowed channels, the channels array must match the allowed
+     * channels. If channels are specified, event updates without any channel designation will not be included in the subscription. Defaults to no channels filter.
+     */
     channels?: string | string[];
     /** if true, the data object passed to server.event.emit() is cloned before it is passed to the listener method. Defaults to the event registration option (which defaults to false). */
     clone?: boolean;
-    /** a positive integer indicating the number of times the listener can be called after which the subscription is automatically removed. A count of 1 is the same as calling server.events.once(). Defaults to no limit. */
+    /**
+     * a positive integer indicating the number of times the listener can be called after which the subscription is automatically removed. A count of 1 is the same as calling server.events.once().
+     * Defaults to no limit.
+     */
     count?: number;
     /**
      * filter - the event tags (if present) to subscribe to which can be one of:
@@ -2104,9 +2177,15 @@ export interface ServerEventCriteria<T> {
      * * * all - if true, all tags must be present for the event update to match the subscription. Defaults to false (at least one matching tag).
      */
     filter?: string | string[] | {tags: string | string[], all?: boolean};
-    /** if true, and the data object passed to server.event.emit() is an array, the listener method is called with each array element passed as a separate argument. This should only be used when the emitted data structure is known and predictable. Defaults to the event registration option (which defaults to false). */
+    /**
+     * if true, and the data object passed to server.event.emit() is an array, the listener method is called with each array element passed as a separate argument. This should only be used
+     * when the emitted data structure is known and predictable. Defaults to the event registration option (which defaults to false).
+     */
     spread?: boolean;
-    /** if true and the criteria object passed to server.event.emit() includes tags, the tags are mapped to an object (where each tag string is the key and the value is true) which is appended to the arguments list at the end. Defaults to the event registration option (which defaults to false). */
+    /**
+     * if true and the criteria object passed to server.event.emit() includes tags, the tags are mapped to an object (where each tag string is the key and the value is true) which is appended
+     * to the arguments list at the end. Defaults to the event registration option (which defaults to false).
+     */
     tags?: boolean;
 }
 
@@ -2147,11 +2226,17 @@ export type StopEventHandler = () => void;
 
 export interface PodiumEvent<K extends string, T> {
     emit(criteria: K, listener: (value: T) => void): void;
+
     on(criteria: K, listener: (value: T) => void): void;
+
     once(criteria: K, listener: (value: T) => void): void;
+
     once(criteria: K): Promise<T>;
+
     removeListener(criteria: K, listener: Podium.Listener): this;
+
     removeAllListeners(criteria: K): this;
+
     hasListeners(criteria: K): this;
 }
 
@@ -2184,10 +2269,15 @@ export interface ServerEvents extends Podium {
      * See ['stop' event](https://github.com/hapijs/hapi/blob/master/API.md#-stop-event)
      */
     on(criteria: "log" | ServerEventCriteria<"log">, listener: LogEventHandler): void;
+
     on(criteria: "request" | ServerEventCriteria<"request">, listener: RequestEventHandler): void;
+
     on(criteria: "response" | ServerEventCriteria<"response">, listener: ResponseEventHandler): void;
+
     on(criteria: "route" | ServerEventCriteria<"route">, listener: RouteEventHandler): void;
+
     on(criteria: "start" | ServerEventCriteria<"start">, listener: StartEventHandler): void;
+
     on(criteria: "stop" | ServerEventCriteria<"stop">, listener: StopEventHandler): void;
 
     /**
@@ -2201,12 +2291,16 @@ export interface ServerEvents extends Podium {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-servereventsoncecriteria-listener)
      */
     once(criteria: "log" | ServerEventCriteria<"log">, listener: LogEventHandler): void;
-    once(criteria: "request" | ServerEventCriteria<"request">, listener: RequestEventHandler): void;
-    once(criteria: "response" | ServerEventCriteria<"response">, listener: ResponseEventHandler): void;
-    once(criteria: "route" | ServerEventCriteria<"route">, listener: RouteEventHandler): void;
-    once(criteria: "start" | ServerEventCriteria<"start">, listener: StartEventHandler): void;
-    once(criteria: "stop" | ServerEventCriteria<"stop">, listener: StopEventHandler): void;
 
+    once(criteria: "request" | ServerEventCriteria<"request">, listener: RequestEventHandler): void;
+
+    once(criteria: "response" | ServerEventCriteria<"response">, listener: ResponseEventHandler): void;
+
+    once(criteria: "route" | ServerEventCriteria<"route">, listener: RouteEventHandler): void;
+
+    once(criteria: "start" | ServerEventCriteria<"start">, listener: StartEventHandler): void;
+
+    once(criteria: "stop" | ServerEventCriteria<"stop">, listener: StopEventHandler): void;
 
     /**
      * Same as calling server.events.on() with the count option set to 1.
@@ -2236,7 +2330,6 @@ export interface ServerEvents extends Podium {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverevents)
      */
     hasListeners(name: string): boolean;
-
 }
 
 /**
@@ -2249,7 +2342,14 @@ export interface ServerEvents extends Podium {
  * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#request-lifecycle)
  */
 export type ServerExtType = 'onPreStart' | 'onPostStart' | 'onPreStop' | 'onPostStop';
-export type ServerRequestExtType = 'onRequest' | 'onPreAuth' | 'onCredentials' | 'onPostAuth' | 'onPreHandler' | 'onPostHandler' | 'onPreResponse';
+export type ServerRequestExtType =
+    'onRequest'
+    | 'onPreAuth'
+    | 'onCredentials'
+    | 'onPostAuth'
+    | 'onPreHandler'
+    | 'onPostHandler'
+    | 'onPreResponse';
 
 /**
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverextevents)
@@ -2269,7 +2369,8 @@ export type ServerRequestExtType = 'onRequest' | 'onPreAuth' | 'onCredentials' |
  * * * before - a string or array of strings of plugin names this method must execute before (on the same event). Otherwise, extension methods are executed in the order added.
  * * * after - a string or array of strings of plugin names this method must execute after (on the same event). Otherwise, extension methods are executed in the order added.
  * * * bind - a context object passed back to the provided method (via this) when called. Ignored if the method is an arrow function.
- * * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
+ * * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or
+ *     when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
  * @return void
  */
 export interface ServerExtEventsObject {
@@ -2293,7 +2394,8 @@ export interface ServerExtEventsObject {
      * * before - a string or array of strings of plugin names this method must execute before (on the same event). Otherwise, extension methods are executed in the order added.
      * * after - a string or array of strings of plugin names this method must execute after (on the same event). Otherwise, extension methods are executed in the order added.
      * * bind - a context object passed back to the provided method (via this) when called. Ignored if the method is an arrow function.
-     * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
+     * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions,
+     * or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
      */
     options?: ServerExtOptions;
 }
@@ -2316,7 +2418,8 @@ export interface ServerExtEventsObject {
  * * * before - a string or array of strings of plugin names this method must execute before (on the same event). Otherwise, extension methods are executed in the order added.
  * * * after - a string or array of strings of plugin names this method must execute after (on the same event). Otherwise, extension methods are executed in the order added.
  * * * bind - a context object passed back to the provided method (via this) when called. Ignored if the method is an arrow function.
- * * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
+ * * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or
+ *     when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
  * @return void
  */
 export interface ServerExtEventsRequestObject {
@@ -2341,22 +2444,22 @@ export interface ServerExtEventsRequestObject {
      * * before - a string or array of strings of plugin names this method must execute before (on the same event). Otherwise, extension methods are executed in the order added.
      * * after - a string or array of strings of plugin names this method must execute after (on the same event). Otherwise, extension methods are executed in the order added.
      * * bind - a context object passed back to the provided method (via this) when called. Ignored if the method is an arrow function.
-     * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
+     * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions,
+     * or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
      */
     options?: ServerExtOptions;
 }
 
-export interface ServerExtPointFunction {
-    (server: Server): void;
-}
+export type ServerExtPointFunction = (server: Server) => void;
 
 /**
  * An object with the following:
  * * before - a string or array of strings of plugin names this method must execute before (on the same event). Otherwise, extension methods are executed in the order added.
  * * after - a string or array of strings of plugin names this method must execute after (on the same event). Otherwise, extension methods are executed in the order added.
  * * bind - a context object passed back to the provided method (via this) when called. Ignored if the method is an arrow function.
- * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
- * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverextevents)
+ * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or
+ * when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to. For context [See
+ * docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverextevents)
  */
 export interface ServerExtOptions {
     /**
@@ -2372,7 +2475,8 @@ export interface ServerExtOptions {
      */
     bind: object;
     /**
-     * if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
+     * if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or when
+     * adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
      */
     sandbox?: 'server' | 'plugin';
 }
@@ -2382,7 +2486,6 @@ export interface ServerExtOptions {
  * An object containing information about the server where:
  */
 export interface ServerInfo {
-
     /**
      * a unique server identifier (using the format '{hostname}:{pid}:{now base36}').
      */
@@ -2430,7 +2533,6 @@ export interface ServerInfo {
      * to 0, the uri will not include a port component until the server is started.
      */
     uri: string;
-
 }
 
 /**
@@ -2438,9 +2540,12 @@ export interface ServerInfo {
  * * method - (optional) the request HTTP method (e.g. 'POST'). Defaults to 'GET'.
  * * url - (required) the request URL. If the URI includes an authority (e.g. 'example.com:8080'), it is used to automatically set an HTTP 'Host' header, unless one was specified in headers.
  * * headers - (optional) an object with optional request headers where each key is the header name and the value is the header content. Defaults to no additions to the default shot headers.
- * * payload - (optional) an string, buffer or object containing the request payload. In case of an object it will be converted to a string for you. Defaults to no payload. Note that payload processing defaults to 'application/json' if no 'Content-Type' header provided.
- * * credentials - (optional) an credentials object containing authentication information. The credentials are used to bypass the default authentication strategies, and are validated directly as if they were received via an authentication scheme. Defaults to no credentials.
- * * artifacts - (optional) an artifacts object containing authentication artifact information. The artifacts are used to bypass the default authentication strategies, and are validated directly as if they were received via an authentication scheme. Ignored if set without credentials. Defaults to no artifacts.
+ * * payload - (optional) an string, buffer or object containing the request payload. In case of an object it will be converted to a string for you. Defaults to no payload. Note that payload
+ * processing defaults to 'application/json' if no 'Content-Type' header provided.
+ * * credentials - (optional) an credentials object containing authentication information. The credentials are used to bypass the default authentication strategies, and are validated directly as if
+ * they were received via an authentication scheme. Defaults to no credentials.
+ * * artifacts - (optional) an artifacts object containing authentication artifact information. The artifacts are used to bypass the default authentication strategies, and are validated directly as
+ * if they were received via an authentication scheme. Ignored if set without credentials. Defaults to no artifacts.
  * * app - (optional) sets the initial value of request.app, defaults to {}.
  * * plugins - (optional) sets the initial value of request.plugins, defaults to {}.
  * * allowInternals - (optional) allows access to routes with config.isInternal set to true. Defaults to false.
@@ -2450,17 +2555,20 @@ export interface ServerInfo {
  * * close - if true, emits a 'close' event after payload transmission (if any). Defaults to false.
  * * end - if false, does not end the stream. Defaults to true.
  * * split - indicates whether the request payload will be split into chunks. Defaults to undefined, meaning payload will not be chunked.
- * * validate - (optional) if false, the options inputs are not validated. This is recommended for run-time usage of inject() to make it perform faster where input validation can be tested separately.
+ * * validate - (optional) if false, the options inputs are not validated. This is recommended for run-time usage of inject() to make it perform faster where input validation can be tested
+ * separately.
  * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-serverinjectoptions)
  * For context [Shot module](https://github.com/hapijs/shot)
  */
 export interface ServerInjectOptions extends Shot.RequestOptions {
     /**
-     * an credentials object containing authentication information. The credentials are used to bypass the default authentication strategies, and are validated directly as if they were received via an authentication scheme. Defaults to no credentials.
+     * an credentials object containing authentication information. The credentials are used to bypass the default authentication strategies, and are validated directly as if they were received via
+     * an authentication scheme. Defaults to no credentials.
      */
     credentials?: AuthCredentials;
     /**
-     * (an artifacts object containing authentication artifact information. The artifacts are used to bypass the default authentication strategies, and are validated directly as if they were received via an authentication scheme. Ignored if set without credentials. Defaults to no artifacts.
+     * (an artifacts object containing authentication artifact information. The artifacts are used to bypass the default authentication strategies, and are validated directly as if they were received
+     * via an authentication scheme. Ignored if set without credentials. Defaults to no artifacts.
      */
     artifacts?: object;
     /**
@@ -2486,14 +2594,16 @@ export interface ServerInjectOptions extends Shot.RequestOptions {
  * * raw - an object with the injection request and response objects:
  * * req - the simulated node request object.
  * * res - the simulated node response object.
- * * result - the raw handler response (e.g. when not a stream or a view) before it is serialized for transmission. If not available, the value is set to payload. Useful for inspection and reuse of the internal objects returned (instead of parsing the response string).
+ * * result - the raw handler response (e.g. when not a stream or a view) before it is serialized for transmission. If not available, the value is set to payload. Useful for inspection and reuse of
+ * the internal objects returned (instead of parsing the response string).
  * * request - the request object.
  * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-serverinjectoptions)
  * For context [Shot module](https://github.com/hapijs/shot)
  */
 export interface ServerInjectResponse extends Shot.ResponseObject {
     /**
-     * the raw handler response (e.g. when not a stream or a view) before it is serialized for transmission. If not available, the value is set to payload. Useful for inspection and reuse of the internal objects returned (instead of parsing the response string).
+     * the raw handler response (e.g. when not a stream or a view) before it is serialized for transmission. If not available, the value is set to payload. Useful for inspection and reuse of the
+     * internal objects returned (instead of parsing the response string).
      */
     result: object | undefined;
     /**
@@ -2523,14 +2633,18 @@ export interface ServerMethodCache extends catbox.PolicyOptions {
 
 /**
  * Configuration object:
- * * bind - a context object passed back to the method function (via this) when called. Defaults to active context (set via server.bind() when the method is registered. Ignored if the method is an arrow function.
+ * * bind - a context object passed back to the method function (via this) when called. Defaults to active context (set via server.bind() when the method is registered. Ignored if the method is an
+ * arrow function.
  * * cache - the same cache configuration used in server.cache(). The generateTimeout option is required.
- * * generateKey - a function used to generate a unique key (for caching) from the arguments passed to the method function (the flags argument is not passed as input). The server will automatically generate a unique key if the function's arguments are all of types 'string', 'number', or 'boolean'. However if the method uses other types of arguments, a key generation function must be provided which takes the same arguments as the function and returns a unique string (or null if no key can be generated).
- * For reference [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-servermethodname-method-options)
+ * * generateKey - a function used to generate a unique key (for caching) from the arguments passed to the method function (the flags argument is not passed as input). The server will automatically
+ * generate a unique key if the function's arguments are all of types 'string', 'number', or 'boolean'. However if the method uses other types of arguments, a key generation function must be provided
+ * which takes the same arguments as the function and returns a unique string (or null if no key can be generated). For reference [See
+ * docs](https://github.com/hapijs/hapi/blob/master/API.md#-servermethodname-method-options)
  */
 export interface ServerMethodOptions {
     /**
-     * a context object passed back to the method function (via this) when called. Defaults to active context (set via server.bind() when the method is registered. Ignored if the method is an arrow function.
+     * a context object passed back to the method function (via this) when called. Defaults to active context (set via server.bind() when the method is registered. Ignored if the method is an arrow
+     * function.
      */
     bind?: object;
     /**
@@ -2538,9 +2652,11 @@ export interface ServerMethodOptions {
      */
     cache?: ServerMethodCache;
     /**
-     * a function used to generate a unique key (for caching) from the arguments passed to the method function (the flags argument is not passed as input). The server will automatically generate a unique key if the function's arguments are all of types 'string', 'number', or 'boolean'. However if the method uses other types of arguments, a key generation function must be provided which takes the same arguments as the function and returns a unique string (or null if no key can be generated).
+     * a function used to generate a unique key (for caching) from the arguments passed to the method function (the flags argument is not passed as input). The server will automatically generate a
+     * unique key if the function's arguments are all of types 'string', 'number', or 'boolean'. However if the method uses other types of arguments, a key generation function must be provided which
+     * takes the same arguments as the function and returns a unique string (or null if no key can be generated).
      */
-    generateKey?: Function;
+    generateKey?: (...args: any[]) => any;
 }
 
 /**
@@ -2570,12 +2686,14 @@ export interface ServerMethodConfigurationObject {
  * MongoDB, Memcached, Riak, among others). Caching is only utilized if methods and plugins explicitly store their state in the cache.
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-cache)
  */
-export interface ServerOptionsCache extends Catbox.PolicyOptions {
-
+export interface ServerOptionsCache extends catbox.PolicyOptions {
     /** a class, a prototype function, or a catbox engine object. */
-    engine?: Catbox.EnginePrototypeOrObject;
+    engine?: catbox.EnginePrototypeOrObject;
 
-    /** an identifier used later when provisioning or configuring caching for server methods or plugins. Each cache name must be unique. A single item may omit the name option which defines the default cache. If every cache includes a name, a default memory cache is provisioned as well. */
+    /**
+     * an identifier used later when provisioning or configuring caching for server methods or plugins. Each cache name must be unique. A single item may omit the name option which defines
+     * the default cache. If every cache includes a name, a default memory cache is provisioned as well.
+     */
     name?: string;
 
     /** if true, allows multiple cache users to share the same segment (e.g. multiple methods using the same cache storage container). Default to false. */
@@ -2586,7 +2704,6 @@ export interface ServerOptionsCache extends Catbox.PolicyOptions {
 
     /** other options passed to the catbox strategy used. Other options are only passed to catbox when engine above is a class or function and ignored if engine is a catbox engine object). */
     [s: string]: any;
-
 }
 
 export interface ServerOptionsCompression {
@@ -2600,18 +2717,19 @@ export interface ServerOptionsCompression {
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-server-options)
  */
 export interface ServerOptions {
-
     /**
      * Default value: '0.0.0.0' (all available network interfaces).
-     * Sets the hostname or IP address the server will listen on. If not configured, defaults to host if present, otherwise to all available network interfaces. Set to '127.0.0.1' or 'localhost' to restrict the server to only those coming from the same host.
+     * Sets the hostname or IP address the server will listen on. If not configured, defaults to host if present, otherwise to all available network interfaces. Set to '127.0.0.1' or 'localhost' to
+     * restrict the server to only those coming from the same host.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serveroptionsaddress)
      */
     address?: string;
 
     /**
      * Default value: {}.
-     * Provides application-specific configuration which can later be accessed via server.settings.app. The framework does not interact with this object. It is simply a reference made available anywhere a server reference is provided.
-     * Note the difference between server.settings.app which is used to store static configuration values and server.app which is meant for storing run-time state.
+     * Provides application-specific configuration which can later be accessed via server.settings.app. The framework does not interact with this object. It is simply a reference made available
+     * anywhere a server reference is provided. Note the difference between server.settings.app which is used to store static configuration values and server.app which is meant for storing run-time
+     * state.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serveroptionsapp)
      */
     app?: any;
@@ -2626,13 +2744,16 @@ export interface ServerOptions {
 
     /**
      * Default value: { engine: require('catbox-memory' }.
-     * Sets up server-side caching providers. Every server includes a default cache for storing application state. By default, a simple memory-based cache is created which has limited capacity and capabilities.
-     * hapi uses catbox for its cache implementation which includes support for common storage solutions (e.g. Redis, MongoDB, Memcached, Riak, among others). Caching is only utilized if methods and plugins explicitly store their state in the cache.
-     * The server cache configuration only defines the storage container itself. The configuration can be assigned one or more (array):
-     * * a class or prototype function (usually obtained by calling require() on a catbox strategy such as require('catbox-redis')). A new catbox client will be created internally using this function.
+     * Sets up server-side caching providers. Every server includes a default cache for storing application state. By default, a simple memory-based cache is created which has limited capacity and
+     * capabilities. hapi uses catbox for its cache implementation which includes support for common storage solutions (e.g. Redis, MongoDB, Memcached, Riak, among others). Caching is only utilized
+     * if methods and plugins explicitly store their state in the cache. The server cache configuration only defines the storage container itself. The configuration can be assigned one or more
+     * (array):
+     * * a class or prototype function (usually obtained by calling require() on a catbox strategy such as require('catbox-redis')). A new catbox client will be created internally using this
+     * function.
      * * a configuration object with the following:
      * * * engine - a class, a prototype function, or a catbox engine object.
-     * * * name - an identifier used later when provisioning or configuring caching for server methods or plugins. Each cache name must be unique. A single item may omit the name option which defines the default cache. If every cache includes a name, a default memory cache is provisioned as well.
+     * * * name - an identifier used later when provisioning or configuring caching for server methods or plugins. Each cache name must be unique. A single item may omit the name option which defines
+     * the default cache. If every cache includes a name, a default memory cache is provisioned as well.
      * * * shared - if true, allows multiple cache users to share the same segment (e.g. multiple methods using the same cache storage container). Default to false.
      * * * partition - (optional) string used to isolate cached data. Defaults to 'hapi-cache'.
      * * * other options passed to the catbox strategy used. Other options are only passed to catbox when engine above is a class or function and ignored if engine is a catbox engine object).
@@ -2648,10 +2769,14 @@ export interface ServerOptions {
 
     /**
      * Default value: { request: ['implementation'] }.
-     * Determines which logged events are sent to the console. This should only be used for development and does not affect which events are actually logged internally and recorded. Set to false to disable all console logging, or to an object with:
+     * Determines which logged events are sent to the console. This should only be used for development and does not affect which events are actually logged internally and recorded. Set to false to
+     * disable all console logging, or to an object with:
      * * log - a string array of server log tags to be displayed via console.error() when the events are logged via server.log() as well as internally generated server logs. Defaults to no output.
-     * * request - a string array of request log tags to be displayed via console.error() when the events are logged via request.log() as well as internally generated request logs. For example, to display all errors, set the option to ['error']. To turn off all console debug messages set it to false. To display all request logs, set it to '*'. Defaults to uncaught errors thrown in external code (these errors are handled automatically and result in an Internal Server Error response) or runtime errors due to developer error.
-     * For example, to display all errors, set the log or request to ['error']. To turn off all output set the log or request to false. To display all server logs, set the log or request to '*'. To disable all debug information, set debug to false.
+     * * request - a string array of request log tags to be displayed via console.error() when the events are logged via request.log() as well as internally generated request logs. For example, to
+     * display all errors, set the option to ['error']. To turn off all console debug messages set it to false. To display all request logs, set it to '*'. Defaults to uncaught errors thrown in
+     * external code (these errors are handled automatically and result in an Internal Server Error response) or runtime errors due to developer error. For example, to display all errors, set the log
+     * or request to ['error']. To turn off all output set the log or request to false. To display all server logs, set the log or request to '*'. To disable all debug information, set debug to
+     * false.
      */
     debug?: false | {
         log?: string[] | false;
@@ -2685,9 +2810,14 @@ export interface ServerOptions {
         sampleInterval?: number;
         /** maximum V8 heap size over which incoming requests are rejected with an HTTP Server Timeout (503) response. Defaults to 0 (no limit). */
         maxHeapUsedBytes?: number;
-        /** maximum process RSS size over which incoming requests are rejected with an HTTP Server Timeout (503) response. Defaults to 0 (no limit).*/
+        /**
+         * maximum process RSS size over which incoming requests are rejected with an HTTP Server Timeout (503) response. Defaults to 0 (no limit).
+         */
         maxRssBytes?: number;
-        /** maximum event loop delay duration in milliseconds over which incoming requests are rejected with an HTTP Server Timeout (503) response. Defaults to 0 (no limit).*/
+        /**
+         * maximum event loop delay duration in milliseconds over which incoming requests are rejected with an HTTP Server Timeout (503) response.
+         * Defaults to 0 (no limit).
+         */
         maxEventLoopDelay?: number;
     };
 
@@ -2705,7 +2835,8 @@ export interface ServerOptions {
 
     /**
      * Default value: {}.
-     * Plugin-specific configuration which can later be accessed via server.settings.plugins. plugins is an object where each key is a plugin name and the value is the configuration. Note the difference between server.settings.plugins which is used to store static configuration values and server.plugins which is meant for storing run-time state.
+     * Plugin-specific configuration which can later be accessed via server.settings.plugins. plugins is an object where each key is a plugin name and the value is the configuration. Note the
+     * difference between server.settings.plugins which is used to store static configuration values and server.plugins which is meant for storing run-time state.
      */
     plugins?: PluginSpecificConfiguration;
 
@@ -2734,16 +2865,16 @@ export interface ServerOptions {
     routes?: RouteOptions;
 
     /**
-     Default value:
-     {
-         strictHeader: true,
-         ignoreErrors: false,
-         isSecure: true,
-         isHttpOnly: true,
-         isSameSite: 'Strict',
-         encoding: 'none'
-     }
-     Sets the default configuration for every state (cookie) set explicitly via server.state() or implicitly (without definition) using the state configuration object.
+     * Default value:
+     * {
+     *     strictHeader: true,
+     *     ignoreErrors: false,
+     *     isSecure: true,
+     *     isHttpOnly: true,
+     *     isSameSite: 'Strict',
+     *     encoding: 'none'
+     * }
+     * Sets the default configuration for every state (cookie) set explicitly via server.state() or implicitly (without definition) using the state configuration object.
      */
     // TODO I am not sure if I need to use all the server.state() definition (like the default value) OR only the options below. The v16 use "any" here.
     // state?: ServerStateCookieOptions;
@@ -2767,13 +2898,14 @@ export interface ServerOptions {
      * The full public URI without the path (e.g. 'http://example.com:8080'). If present, used as the server server.info.uri, otherwise constructed from the server settings.
      */
     uri?: string;
-
 }
 
 /**
- * The realm object contains sandboxed server settings specific to each plugin or authentication strategy. When registering a plugin or an authentication scheme, a server object reference is provided with a new server.realm container specific to that registration. It allows each plugin to maintain its own settings without leaking and affecting other plugins.
- * For example, a plugin can set a default file path for local resources without breaking other plugins' configured paths. When calling server.bind(), the active realm's settings.bind property is set which is then used by routes and extensions added at the same level (server root or plugin).
- * 
+ * The realm object contains sandboxed server settings specific to each plugin or authentication strategy. When registering a plugin or an authentication scheme, a server object reference is provided
+ * with a new server.realm container specific to that registration. It allows each plugin to maintain its own settings without leaking and affecting other plugins. For example, a plugin can set a
+ * default file path for local resources without breaking other plugins' configured paths. When calling server.bind(), the active realm's settings.bind property is set which is then used by routes
+ * and extensions added at the same level (server root or plugin).
+ *
  * https://github.com/hapijs/hapi/blob/master/API.md#server.realm
  */
 export interface ServerRealm {
@@ -2781,7 +2913,10 @@ export interface ServerRealm {
     modifiers: {
         /** routes preferences: */
         route: {
-            /** the route path prefix used by any calls to server.route() from the server. Note that if a prefix is used and the route path is set to '/', the resulting path will not include the trailing slash. */
+            /**
+             * the route path prefix used by any calls to server.route() from the server. Note that if a prefix is used and the route path is set to '/', the resulting path will not include
+             * the trailing slash.
+             */
             prefix: string;
             /** the route virtual host settings used by any calls to server.route() from the server. */
             vhost: string;
@@ -2806,15 +2941,18 @@ export interface ServerRealm {
 
 /**
  * Registration options (different from the options passed to the registration function):
- * * once - if true, subsequent registrations of the same plugin are skipped without error. Cannot be used with plugin options. Defaults to false. If not set to true, an error will be thrown the second time a plugin is registered on the server.
+ * * once - if true, subsequent registrations of the same plugin are skipped without error. Cannot be used with plugin options. Defaults to false. If not set to true, an error will be thrown the
+ * second time a plugin is registered on the server.
  * * routes - modifiers applied to each route added by the plugin:
- * * * prefix - string added as prefix to any route path (must begin with '/'). If a plugin registers a child plugin the prefix is passed on to the child or is added in front of the child-specific prefix.
+ * * * prefix - string added as prefix to any route path (must begin with '/'). If a plugin registers a child plugin the prefix is passed on to the child or is added in front of the child-specific
+ * prefix.
  * * * vhost - virtual host string (or array of strings) applied to every route. The outer-most vhost overrides the any nested configuration.
  * For reference [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-serverregisterplugins-options)
  */
 export interface ServerRegisterOptions {
     /**
-     * if true, subsequent registrations of the same plugin are skipped without error. Cannot be used with plugin options. Defaults to false. If not set to true, an error will be thrown the second time a plugin is registered on the server.
+     * if true, subsequent registrations of the same plugin are skipped without error. Cannot be used with plugin options. Defaults to false. If not set to true, an error will be thrown the second
+     * time a plugin is registered on the server.
      */
     once?: boolean;
     /**
@@ -2836,9 +2974,11 @@ export interface ServerRegisterOptions {
  * An object with the following:
  * * plugin - a plugin object.
  * * options - (optional) options passed to the plugin during registration.
- * * once - if true, subsequent registrations of the same plugin are skipped without error. Cannot be used with plugin options. Defaults to false. If not set to true, an error will be thrown the second time a plugin is registered on the server.
+ * * once - if true, subsequent registrations of the same plugin are skipped without error. Cannot be used with plugin options. Defaults to false. If not set to true, an error will be thrown the
+ * second time a plugin is registered on the server.
  * * routes - modifiers applied to each route added by the plugin:
- * * * prefix - string added as prefix to any route path (must begin with '/'). If a plugin registers a child plugin the prefix is passed on to the child or is added in front of the child-specific prefix.
+ * * * prefix - string added as prefix to any route path (must begin with '/'). If a plugin registers a child plugin the prefix is passed on to the child or is added in front of the child-specific
+ * prefix.
  * * * vhost - virtual host string (or array of strings) applied to every route. The outer-most vhost overrides the any nested configuration.
  * For reference [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-serverregisterplugins-options)
  *
@@ -2855,7 +2995,14 @@ export interface ServerRegisterPluginObject<T> extends ServerRegisterOptions {
     options?: T;
 }
 
-export interface ServerRegisterPluginObjectArray<T, U, V, W, X, Y, Z> extends Array<ServerRegisterPluginObject<T> | ServerRegisterPluginObject<U> | ServerRegisterPluginObject<V> | ServerRegisterPluginObject<W> | ServerRegisterPluginObject<X> | ServerRegisterPluginObject<Y> | ServerRegisterPluginObject<Z> | undefined> {
+export interface ServerRegisterPluginObjectArray<T, U, V, W, X, Y, Z> extends Array<ServerRegisterPluginObject<T>
+                                                                                    | ServerRegisterPluginObject<U>
+                                                                                    | ServerRegisterPluginObject<V>
+                                                                                    | ServerRegisterPluginObject<W>
+                                                                                    | ServerRegisterPluginObject<X>
+                                                                                    | ServerRegisterPluginObject<Y>
+                                                                                    | ServerRegisterPluginObject<Z>
+                                                                                    | undefined> {
     0: ServerRegisterPluginObject<T>;
     1?: ServerRegisterPluginObject<U>;
     2?: ServerRegisterPluginObject<V>;
@@ -2865,36 +3012,43 @@ export interface ServerRegisterPluginObjectArray<T, U, V, W, X, Y, Z> extends Ar
     6?: ServerRegisterPluginObject<Z>;
 }
 
+/* tslint:disable-next-line:no-empty-interface */
 export interface HandlerDecorations {
-
 }
 
 /**
  * A route configuration object or an array of configuration objects where each object contains:
- * * path - (required) the absolute path used to match incoming requests (must begin with '/'). Incoming requests are compared to the configured paths based on the server's router configuration. The path can include named parameters enclosed in {} which will be matched against literal values in the request as described in Path parameters.
- * * method - (required) the HTTP method. Typically one of 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', or 'OPTIONS'. Any HTTP method is allowed, except for 'HEAD'. Use '*' to match against any HTTP method (only when an exact match was not found, and any match with a specific method will be given a higher priority over a wildcard match). Can be assigned an array of methods which has the same result as adding the same route with different methods manually.
- * * vhost - (optional) a domain string or an array of domain strings for limiting the route to only requests with a matching host header field. Matching is done against the hostname part of the header only (excluding the port). Defaults to all hosts.
+ * * path - (required) the absolute path used to match incoming requests (must begin with '/'). Incoming requests are compared to the configured paths based on the server's router configuration. The
+ * path can include named parameters enclosed in {} which will be matched against literal values in the request as described in Path parameters.
+ * * method - (required) the HTTP method. Typically one of 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', or 'OPTIONS'. Any HTTP method is allowed, except for 'HEAD'. Use '*' to match against any HTTP
+ * method (only when an exact match was not found, and any match with a specific method will be given a higher priority over a wildcard match). Can be assigned an array of methods which has the same
+ * result as adding the same route with different methods manually.
+ * * vhost - (optional) a domain string or an array of domain strings for limiting the route to only requests with a matching host header field. Matching is done against the hostname part of the
+ * header only (excluding the port). Defaults to all hosts.
  * * handler - (required when handler is not set) the route handler function called to generate the response after successful authentication and validation.
- * * options - additional route options. The options value can be an object or a function that returns an object using the signature function(server) where server is the server the route is being added to and this is bound to the current realm's bind option.
+ * * options - additional route options. The options value can be an object or a function that returns an object using the signature function(server) where server is the server the route is being
+ * added to and this is bound to the current realm's bind option.
  * * rules - route custom rules object. The object is passed to each rules processor registered with server.rules(). Cannot be used if route.options.rules is defined.
  * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverrouteroute)
  */
 export interface ServerRoute {
-
     /**
-     * (required) the absolute path used to match incoming requests (must begin with '/'). Incoming requests are compared to the configured paths based on the server's router configuration. The path can include named parameters enclosed in {} which will be matched against literal values in the request as described in Path parameters.
-     * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverrouteroute)
-     * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#path-parameters)
+     * (required) the absolute path used to match incoming requests (must begin with '/'). Incoming requests are compared to the configured paths based on the server's router configuration. The path
+     * can include named parameters enclosed in {} which will be matched against literal values in the request as described in Path parameters. For context [See
+     * docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverrouteroute) For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#path-parameters)
      */
     path: string;
 
     /**
-     * (required) the HTTP method. Typically one of 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', or 'OPTIONS'. Any HTTP method is allowed, except for 'HEAD'. Use '*' to match against any HTTP method (only when an exact match was not found, and any match with a specific method will be given a higher priority over a wildcard match). Can be assigned an array of methods which has the same result as adding the same route with different methods manually.
+     * (required) the HTTP method. Typically one of 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', or 'OPTIONS'. Any HTTP method is allowed, except for 'HEAD'. Use '*' to match against any HTTP method
+     * (only when an exact match was not found, and any match with a specific method will be given a higher priority over a wildcard match). Can be assigned an array of methods which has the same
+     * result as adding the same route with different methods manually.
      */
     method: Util.HTTP_METHODS_PARTIAL | Util.HTTP_METHODS_PARTIAL[] | string | string[];
 
     /**
-     * (optional) a domain string or an array of domain strings for limiting the route to only requests with a matching host header field. Matching is done against the hostname part of the header only (excluding the port). Defaults to all hosts.
+     * (optional) a domain string or an array of domain strings for limiting the route to only requests with a matching host header field. Matching is done against the hostname part of the header
+     * only (excluding the port). Defaults to all hosts.
      */
     vhost?: string | string[];
 
@@ -2904,7 +3058,8 @@ export interface ServerRoute {
     handler?: Lifecycle.Method | HandlerDecorations;
 
     /**
-     * additional route options. The options value can be an object or a function that returns an object using the signature function(server) where server is the server the route is being added to and this is bound to the current realm's bind option.
+     * additional route options. The options value can be an object or a function that returns an object using the signature function(server) where server is the server the route is being added to
+     * and this is bound to the current realm's bind option.
      */
     options?: RouteOptions | ((server: Server) => RouteOptions);
 
@@ -2936,12 +3091,14 @@ export interface ServerStateCookieOptions {
     path?: string | null;
     /** the domain scope. Defaults to null (no domain). */
     domain?: string | null;
+
     /**
      * if present and the cookie was not received from the client or explicitly set by the route handler, the
      * cookie is automatically added to the response with the provided value. The value can be
      * a function with signature async function(request) where:
      */
     autoValue?(request: Request): void;
+
     /**
      * encoding performs on the provided value before serialization. Options are:
      *  * 'none' - no encoding. When used, the cookie value must be a string. This is the default value.
@@ -3045,8 +3202,8 @@ export interface ServerState {
  * The method function can have a defaults object or function property. If the property is set to an object, that object is used as the default route config for routes using this handler.
  * If the property is set to a function, the function uses the signature function(method) and returns the route default configuration.
  */
-export interface HandlerDecorationMethod<T> {
-    (route: RouteOptions, options: T): Lifecycle.Method;
+export interface HandlerDecorationMethod {
+    (route: RouteOptions, options: any): Lifecycle.Method;
     defaults?: RouteOptions | ((method: any) => RouteOptions);
 }
 
@@ -3056,20 +3213,12 @@ export interface HandlerDecorationMethod<T> {
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#server)
  */
 export class Server extends Podium {
-
     /**
      * Creates a new server object
-     * @constructor
-     */
-    constructor();
-
-    /**
-     * Creates a new server object where:
-     * @constructor
      * @param options server configuration object.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serveroptions)
      */
-    constructor(options: ServerOptions);
+    constructor(options?: ServerOptions);
 
     /**
      * Provides a safe place to store server-specific run-time application data without potential conflicts with
@@ -3111,10 +3260,15 @@ export class Server extends Podium {
      * * an event options object with the following optional keys (unless noted otherwise):
      * * * name - the event name string (required).
      * * * channels - a string or array of strings specifying the event channels available. Defaults to no channel restrictions (event updates can specify a channel or not).
-     * * * clone - if true, the data object passed to server.events.emit() is cloned before it is passed to the listeners (unless an override specified by each listener). Defaults to false (data is passed as-is).
-     * * * spread - if true, the data object passed to server.event.emit() must be an array and the listener method is called with each array element passed as a separate argument (unless an override specified by each listener). This should only be used when the emitted data structure is known and predictable. Defaults to false (data is emitted as a single argument regardless of its type).
-     * * * tags - if true and the criteria object passed to server.event.emit() includes tags, the tags are mapped to an object (where each tag string is the key and the value is true) which is appended to the arguments list at the end. A configuration override can be set by each listener. Defaults to false.
-     * * * shared - if true, the same event name can be registered multiple times where the second registration is ignored. Note that if the registration config is changed between registrations, only the first configuration is used. Defaults to false (a duplicate registration will throw an error).
+     * * * clone - if true, the data object passed to server.events.emit() is cloned before it is passed to the listeners (unless an override specified by each listener). Defaults to false (data is
+     *     passed as-is).
+     * * * spread - if true, the data object passed to server.event.emit() must be an array and the listener method is called with each array element passed as a separate argument (unless an override
+     *     specified by each listener). This should only be used when the emitted data structure is known and predictable. Defaults to false (data is emitted as a single argument regardless of its
+     *     type).
+     * * * tags - if true and the criteria object passed to server.event.emit() includes tags, the tags are mapped to an object (where each tag string is the key and the value is true) which is
+     *     appended to the arguments list at the end. A configuration override can be set by each listener. Defaults to false.
+     * * * shared - if true, the same event name can be registered multiple times where the second registration is ignored. Note that if the registration config is changed between registrations, only
+     *     the first configuration is used. Defaults to false (a duplicate registration will throw an error).
      * * a podium emitter object.
      * * an array containing any of the above.
      * @return Return value: none.
@@ -3146,7 +3300,8 @@ export class Server extends Podium {
      * * 'http' - HTTP.
      * * 'https' - HTTPS.
      * * 'socket' - UNIX domain socket or Windows named pipe.
-     * * uri - a string representing the connection (e.g. 'http://example.com:8080' or 'socket:/unix/domain/socket/path'). Contains the uri value if set, otherwise constructed from the available settings. If no port is configured or is set to 0, the uri will not include a port component until the server is started.
+     * * uri - a string representing the connection (e.g. 'http://example.com:8080' or 'socket:/unix/domain/socket/path'). Contains the uri value if set, otherwise constructed from the available
+     * settings. If no port is configured or is set to 0, the uri will not include a port component until the server is started.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverinfo)
      */
     readonly info: ServerInfo;
@@ -3256,7 +3411,8 @@ export class Server extends Podium {
      * Sets a global context used as the default bind object when adding a route or an extension where:
      * @param context - the object used to bind this in lifecycle methods such as the route handler and extension methods. The context is also made available as h.context.
      * @return Return value: none.
-     * When setting a context inside a plugin, the context is applied only to methods set up by the plugin. Note that the context applies only to routes and extensions added after it has been set. Ignored if the method being bound is an arrow function.
+     * When setting a context inside a plugin, the context is applied only to methods set up by the plugin. Note that the context applies only to routes and extensions added after it has been set.
+     *     Ignored if the method being bound is an arrow function.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverbindcontext)
      */
     bind(context: object): void;
@@ -3269,7 +3425,8 @@ export class Server extends Podium {
     /**
      * Registers a custom content decoding compressor to extend the built-in support for 'gzip' and 'deflate' where:
      * @param encoding - the decoder name string.
-     * @param decoder - a function using the signature function(options) where options are the encoding specific options configured in the route payload.compression configuration option, and the return value is an object compatible with the output of node's zlib.createGunzip().
+     * @param decoder - a function using the signature function(options) where options are the encoding specific options configured in the route payload.compression configuration option, and the
+     *     return value is an object compatible with the output of node's zlib.createGunzip().
      * @return Return value: none.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverdecoderencoding-decoder)
      */
@@ -3285,24 +3442,23 @@ export class Server extends Podium {
      * @param property - the object decoration key name.
      * @param method - the extension function or other value.
      * @param options - (optional) supports the following optional settings:
-     * apply - when the type is 'request', if true, the method function is invoked using the signature function(request) where request is the current request object and the returned value is assigned as the decoration.
-     * extend - if true, overrides an existing decoration. The method must be a function with the signature function(existing) where:
-     * existing - is the previously set decoration method value.
-     * must return the new decoration function or value.
-     * cannot be used to extend handler decorations.
+     * apply - when the type is 'request', if true, the method function is invoked using the signature function(request) where request is the current request object and the returned value is assigned
+     *     as the decoration. extend - if true, overrides an existing decoration. The method must be a function with the signature function(existing) where: existing - is the previously set
+     *     decoration method value. must return the new decoration function or value. cannot be used to extend handler decorations.
      * @return void;
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverdecoratetype-property-method-options)
      */
-    decorate<T>(type: 'handler', property: string, method: HandlerDecorationMethod<T>, options?: {apply?: boolean, extend?: boolean}): void;
+    decorate(type: 'handler', property: string, method: HandlerDecorationMethod, options?: {apply?: boolean, extend?: boolean}): void;
     decorate(type: 'request', property: string, method: (this: Request) => Lifecycle.ReturnValue, options?: {apply: false, extend?: boolean}): void;
     decorate(type: 'request', property: string, method: (request: Request) => (this: Request) => Lifecycle.ReturnValue, options: {apply: true, extend?: boolean}): void;
     decorate(type: 'toolkit', property: string, method: (this: ResponseToolkit) => Lifecycle.ReturnValue): void;
 
     /**
      * Used within a plugin to declare a required dependency on other plugins where:
-     * @param dependencies - a single string or an array of plugin name strings which must be registered in order for this plugin to operate. Plugins listed must be registered before the server is initialized or started.
-     * @param after - (optional) a function that is called after all the specified dependencies have been registered and before the server starts. The function is only called if the server is initialized or started. The function signature is async function(server) where:
-     * server - the server the dependency() method was called on.
+     * @param dependencies - a single string or an array of plugin name strings which must be registered in order for this plugin to operate. Plugins listed must be registered before the server is
+     *     initialized or started.
+     * @param after - (optional) a function that is called after all the specified dependencies have been registered and before the server starts. The function is only called if the server is
+     *     initialized or started. The function signature is async function(server) where: server - the server the dependency() method was called on.
      * @return Return value: none.
      * The after method is identical to setting a server extension point on 'onPreStart'.
      * If a circular dependency is detected, an exception is thrown (e.g. two plugins each has an after function to be called after the other).
@@ -3314,7 +3470,8 @@ export class Server extends Podium {
     /**
      * Registers a custom content encoding compressor to extend the built-in support for 'gzip' and 'deflate' where:
      * @param encoding - the encoder name string.
-     * @param encoder - a function using the signature function(options) where options are the encoding specific options configured in the route compression option, and the return value is an object compatible with the output of node's zlib.createGzip().
+     * @param encoder - a function using the signature function(options) where options are the encoding specific options configured in the route compression option, and the return value is an object
+     *     compatible with the output of node's zlib.createGzip().
      * @return Return value: none.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverencoderencoding-encoder)
      */
@@ -3357,12 +3514,12 @@ export class Server extends Podium {
      * * * before - a string or array of strings of plugin names this method must execute before (on the same event). Otherwise, extension methods are executed in the order added.
      * * * after - a string or array of strings of plugin names this method must execute after (on the same event). Otherwise, extension methods are executed in the order added.
      * * * bind - a context object passed back to the provided method (via this) when called. Ignored if the method is an arrow function.
-     * * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level extensions, or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
+     * * * sandbox - if set to 'plugin' when adding a request extension points the extension is only added to routes defined by the current plugin. Not allowed when configuring route-level
+     *     extensions, or when adding server extensions. Defaults to 'server' which applies to any route added to the server the extension is added to.
      * @return void
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverextevents)
      */
-    ext(events: ServerExtEventsObject | ServerExtEventsObject[]): void;
-    ext(events: ServerExtEventsRequestObject | ServerExtEventsRequestObject[]): void;
+    ext(events: ServerExtEventsObject | ServerExtEventsObject[] | ServerExtEventsRequestObject | ServerExtEventsRequestObject[]): void;
 
     /**
      * Registers a single extension event using the same properties as used in server.ext(events), but passed as arguments.
@@ -3385,15 +3542,18 @@ export class Server extends Podium {
     initialize(): Promise<void>;
 
     /**
-     * Injects a request into the server simulating an incoming HTTP request without making an actual socket connection. Injection is useful for testing purposes as well as for invoking routing logic internally without the overhead and limitations of the network stack.
-     * The method utilizes the shot module for performing injections, with some additional options and response properties:
+     * Injects a request into the server simulating an incoming HTTP request without making an actual socket connection. Injection is useful for testing purposes as well as for invoking routing logic
+     * internally without the overhead and limitations of the network stack. The method utilizes the shot module for performing injections, with some additional options and response properties:
      * @param options - can be assigned a string with the requested URI, or an object with:
      * * method - (optional) the request HTTP method (e.g. 'POST'). Defaults to 'GET'.
      * * url - (required) the request URL. If the URI includes an authority (e.g. 'example.com:8080'), it is used to automatically set an HTTP 'Host' header, unless one was specified in headers.
      * * headers - (optional) an object with optional request headers where each key is the header name and the value is the header content. Defaults to no additions to the default shot headers.
-     * * payload - (optional) an string, buffer or object containing the request payload. In case of an object it will be converted to a string for you. Defaults to no payload. Note that payload processing defaults to 'application/json' if no 'Content-Type' header provided.
-     * * credentials - (optional) an credentials object containing authentication information. The credentials are used to bypass the default authentication strategies, and are validated directly as if they were received via an authentication scheme. Defaults to no credentials.
-     * * artifacts - (optional) an artifacts object containing authentication artifact information. The artifacts are used to bypass the default authentication strategies, and are validated directly as if they were received via an authentication scheme. Ignored if set without credentials. Defaults to no artifacts.
+     * * payload - (optional) an string, buffer or object containing the request payload. In case of an object it will be converted to a string for you. Defaults to no payload. Note that payload
+     *     processing defaults to 'application/json' if no 'Content-Type' header provided.
+     * * credentials - (optional) an credentials object containing authentication information. The credentials are used to bypass the default authentication strategies, and are validated directly as
+     *     if they were received via an authentication scheme. Defaults to no credentials.
+     * * artifacts - (optional) an artifacts object containing authentication artifact information. The artifacts are used to bypass the default authentication strategies, and are validated directly
+     *     as if they were received via an authentication scheme. Ignored if set without credentials. Defaults to no artifacts.
      * * app - (optional) sets the initial value of request.app, defaults to {}.
      * * plugins - (optional) sets the initial value of request.plugins, defaults to {}.
      * * allowInternals - (optional) allows access to routes with config.isInternal set to true. Defaults to false.
@@ -3403,7 +3563,8 @@ export class Server extends Podium {
      * * close - if true, emits a 'close' event after payload transmission (if any). Defaults to false.
      * * end - if false, does not end the stream. Defaults to true.
      * * split - indicates whether the request payload will be split into chunks. Defaults to undefined, meaning payload will not be chunked.
-     * * validate - (optional) if false, the options inputs are not validated. This is recommended for run-time usage of inject() to make it perform faster where input validation can be tested separately.
+     * * validate - (optional) if false, the options inputs are not validated. This is recommended for run-time usage of inject() to make it perform faster where input validation can be tested
+     *     separately.
      * @return Return value: a response object with the following properties:
      * * statusCode - the HTTP status code.
      * * headers - an object containing the headers set.
@@ -3412,16 +3573,20 @@ export class Server extends Podium {
      * * raw - an object with the injection request and response objects:
      * * req - the simulated node request object.
      * * res - the simulated node response object.
-     * * result - the raw handler response (e.g. when not a stream or a view) before it is serialized for transmission. If not available, the value is set to payload. Useful for inspection and reuse of the internal objects returned (instead of parsing the response string).
+     * * result - the raw handler response (e.g. when not a stream or a view) before it is serialized for transmission. If not available, the value is set to payload. Useful for inspection and reuse
+     *     of the internal objects returned (instead of parsing the response string).
      * * request - the request object.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-serverinjectoptions)
      */
     inject(options: string | ServerInjectOptions): Promise<ServerInjectResponse>;
 
     /**
-     * Logs server events that cannot be associated with a specific request. When called the server emits a 'log' event which can be used by other listeners or plugins to record the information or output to the console. The arguments are:
-     * @param tags - (required) a string or an array of strings (e.g. ['error', 'database', 'read']) used to identify the event. Tags are used instead of log levels and provide a much more expressive mechanism for describing and filtering events. Any logs generated by the server internally include the 'hapi' tag along with event-specific information.
-     * @param data - (optional) an message string or object with the application data being logged. If data is a function, the function signature is function() and it called once to generate (return value) the actual data emitted to the listeners. If no listeners match the event, the data function is not invoked.
+     * Logs server events that cannot be associated with a specific request. When called the server emits a 'log' event which can be used by other listeners or plugins to record the information or
+     * output to the console. The arguments are:
+     * @param tags - (required) a string or an array of strings (e.g. ['error', 'database', 'read']) used to identify the event. Tags are used instead of log levels and provide a much more expressive
+     *     mechanism for describing and filtering events. Any logs generated by the server internally include the 'hapi' tag along with event-specific information.
+     * @param data - (optional) an message string or object with the application data being logged. If data is a function, the function signature is function() and it called once to generate (return
+     *     value) the actual data emitted to the listeners. If no listeners match the event, the data function is not invoked.
      * @param timestamp - (optional) an timestamp expressed in milliseconds. Defaults to Date.now() (now).
      * @return Return value: none.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverlogtags-data-timestamp)
@@ -3454,12 +3619,16 @@ export class Server extends Podium {
      * * flags - when caching is enabled, an object used to set optional method result flags:
      * * * ttl - 0 if result is valid but cannot be cached. Defaults to cache policy.
      * @param options - (optional) configuration object:
-     * * bind - a context object passed back to the method function (via this) when called. Defaults to active context (set via server.bind() when the method is registered. Ignored if the method is an arrow function.
+     * * bind - a context object passed back to the method function (via this) when called. Defaults to active context (set via server.bind() when the method is registered. Ignored if the method is
+     *     an arrow function.
      * * cache - the same cache configuration used in server.cache(). The generateTimeout option is required.
-     * * generateKey - a function used to generate a unique key (for caching) from the arguments passed to the method function (the flags argument is not passed as input). The server will automatically generate a unique key if the function's arguments are all of types 'string', 'number', or 'boolean'. However if the method uses other types of arguments, a key generation function must be provided which takes the same arguments as the function and returns a unique string (or null if no key can be generated).
+     * * generateKey - a function used to generate a unique key (for caching) from the arguments passed to the method function (the flags argument is not passed as input). The server will
+     *     automatically generate a unique key if the function's arguments are all of types 'string', 'number', or 'boolean'. However if the method uses other types of arguments, a key generation
+     *     function must be provided which takes the same arguments as the function and returns a unique string (or null if no key can be generated).
      * @return Return value: none.
      * Method names can be nested (e.g. utils.users.get) which will automatically create the full path under server.methods (e.g. accessed via server.methods.utils.users.get).
-     * When configured with caching enabled, server.methods[name].cache is assigned an object with the following properties and methods: - await drop(...args) - a function that can be used to clear the cache for a given key. - stats - an object with cache statistics, see catbox for stats documentation.
+     * When configured with caching enabled, server.methods[name].cache is assigned an object with the following properties and methods: - await drop(...args) - a function that can be used to clear
+     *     the cache for a given key. - stats - an object with cache statistics, see catbox for stats documentation.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-servermethodname-method-options)
      */
     method(name: string, method: ServerMethod, options?: ServerMethodOptions): void;
@@ -3479,7 +3648,8 @@ export class Server extends Podium {
      * Sets the path prefix used to locate static resources (files and view templates) when relative paths are used where:
      * @param relativeTo - the path prefix added to any relative file path starting with '.'.
      * @return Return value: none.
-     * Note that setting a path within a plugin only applies to resources accessed by plugin methods. If no path is set, the server default route configuration files.relativeTo settings is used. The path only applies to routes added after it has been set.
+     * Note that setting a path within a plugin only applies to resources accessed by plugin methods. If no path is set, the server default route configuration files.relativeTo settings is used. The
+     *     path only applies to routes added after it has been set.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverpathrelativeto)
      */
     path(relativeTo: string): void;
@@ -3493,26 +3663,36 @@ export class Server extends Podium {
      * * * options - (optional) options passed to the plugin during registration.
      * * * once, routes - (optional) plugin-specific registration options as defined below.
      * @param options - (optional) registration options (different from the options passed to the registration function):
-     * * once - if true, subsequent registrations of the same plugin are skipped without error. Cannot be used with plugin options. Defaults to false. If not set to true, an error will be thrown the second time a plugin is registered on the server.
+     * * once - if true, subsequent registrations of the same plugin are skipped without error. Cannot be used with plugin options. Defaults to false. If not set to true, an error will be thrown the
+     *     second time a plugin is registered on the server.
      * * routes - modifiers applied to each route added by the plugin:
-     * * * prefix - string added as prefix to any route path (must begin with '/'). If a plugin registers a child plugin the prefix is passed on to the child or is added in front of the child-specific prefix.
+     * * * prefix - string added as prefix to any route path (must begin with '/'). If a plugin registers a child plugin the prefix is passed on to the child or is added in front of the
+     *     child-specific prefix.
      * * * vhost - virtual host string (or array of strings) applied to every route. The outer-most vhost overrides the any nested configuration.
      * @return Return value: none.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-serverregisterplugins-options)
      */
+     /* tslint:disable-next-line:no-unnecessary-generics */
     register<T>(plugin: ServerRegisterPluginObject<T>, options?: ServerRegisterOptions): Promise<void>;
+    /* tslint:disable-next-line:no-unnecessary-generics */
     register<T, U, V, W, X, Y, Z>(plugins: ServerRegisterPluginObjectArray<T, U, V, W, X, Y, Z>, options?: ServerRegisterOptions): Promise<void>;
-    register(plugins: ServerRegisterPluginObject<any>[], options?: ServerRegisterOptions): Promise<void>;
-    register(plugins: Plugin<any> | Plugin<any>[], options?: ServerRegisterOptions): Promise<void>;
+    register(plugins: Array<ServerRegisterPluginObject<any>>, options?: ServerRegisterOptions): Promise<void>;
+    /* tslint:disable-next-line:unified-signatures */
+    register(plugins: Plugin<any> | Array<Plugin<any>>, options?: ServerRegisterOptions): Promise<void>;
 
     /**
      * Adds a route where:
      * @param route - a route configuration object or an array of configuration objects where each object contains:
-     * * path - (required) the absolute path used to match incoming requests (must begin with '/'). Incoming requests are compared to the configured paths based on the server's router configuration. The path can include named parameters enclosed in {} which will be matched against literal values in the request as described in Path parameters.
-     * * method - (required) the HTTP method. Typically one of 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', or 'OPTIONS'. Any HTTP method is allowed, except for 'HEAD'. Use '*' to match against any HTTP method (only when an exact match was not found, and any match with a specific method will be given a higher priority over a wildcard match). Can be assigned an array of methods which has the same result as adding the same route with different methods manually.
-     * * vhost - (optional) a domain string or an array of domain strings for limiting the route to only requests with a matching host header field. Matching is done against the hostname part of the header only (excluding the port). Defaults to all hosts.
+     * * path - (required) the absolute path used to match incoming requests (must begin with '/'). Incoming requests are compared to the configured paths based on the server's router configuration.
+     *     The path can include named parameters enclosed in {} which will be matched against literal values in the request as described in Path parameters.
+     * * method - (required) the HTTP method. Typically one of 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', or 'OPTIONS'. Any HTTP method is allowed, except for 'HEAD'. Use '*' to match against any HTTP
+     *     method (only when an exact match was not found, and any match with a specific method will be given a higher priority over a wildcard match). Can be assigned an array of methods which has
+     *     the same result as adding the same route with different methods manually.
+     * * vhost - (optional) a domain string or an array of domain strings for limiting the route to only requests with a matching host header field. Matching is done against the hostname part of the
+     *     header only (excluding the port). Defaults to all hosts.
      * * handler - (required when handler is not set) the route handler function called to generate the response after successful authentication and validation.
-     * * options - additional route options. The options value can be an object or a function that returns an object using the signature function(server) where server is the server the route is being added to and this is bound to the current realm's bind option.
+     * * options - additional route options. The options value can be an object or a function that returns an object using the signature function(server) where server is the server the route is being
+     *     added to and this is bound to the current realm's bind option.
      * * rules - route custom rules object. The object is passed to each rules processor registered with server.rules(). Cannot be used if route.options.rules is defined.
      * @return Return value: none.
      * Note that the options object is deeply cloned (with the exception of bind which is shallowly copied) and cannot contain any values that are unsafe to perform deep copy on.
@@ -3533,7 +3713,9 @@ export class Server extends Podium {
      * * validate - rules object validation:
      * * * schema - joi schema.
      * * * options - optional joi validation options. Defaults to { allowUnknown: true }.
-     * Note that the root server and each plugin server instance can only register one rules processor. If a route is added after the rules are configured, it will not include the rules config. Routes added by plugins apply the rules to each of the parent realms' rules from the root to the route's realm. This means the processor defined by the plugin override the config generated by the root processor if they overlap. The route config overrides the rules config if the overlap.
+     * Note that the root server and each plugin server instance can only register one rules processor. If a route is added after the rules are configured, it will not include the rules config.
+     *     Routes added by plugins apply the rules to each of the parent realms' rules from the root to the route's realm. This means the processor defined by the plugin override the config generated
+     *     by the root processor if they overlap. The route config overrides the rules config if the overlap.
      * @return void
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverrulesprocessor-options)
      */
@@ -3542,8 +3724,10 @@ export class Server extends Podium {
     /**
      * Starts the server by listening for incoming requests on the configured port (unless the connection was configured with autoListen set to false).
      * @return Return value: none.
-     * Note that if the method fails and throws an error, the server is considered to be in an undefined state and should be shut down. In most cases it would be impossible to fully recover as the various plugins, caches, and other event listeners will get confused by repeated attempts to start the server or make assumptions about the healthy state of the environment. It is recommended to abort the process when the server fails to start properly. If you must try to resume after an error, call server.stop() first to reset the server state.
-     * If a started server is started again, the second call to server.start() is ignored. No events will be emitted and no extension points invoked.
+     * Note that if the method fails and throws an error, the server is considered to be in an undefined state and should be shut down. In most cases it would be impossible to fully recover as the
+     *     various plugins, caches, and other event listeners will get confused by repeated attempts to start the server or make assumptions about the healthy state of the environment. It is
+     *     recommended to abort the process when the server fails to start properly. If you must try to resume after an error, call server.stop() first to reset the server state. If a started server
+     *     is started again, the second call to server.start() is ignored. No events will be emitted and no extension points invoked.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-await-serverstart)
      */
     start(): Promise<void>;
@@ -3576,8 +3760,7 @@ export class Server extends Podium {
      * * path - the route path.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-servertablehost)
      */
-    table(host?: string): {settings: ServerRoute; method: Util.HTTP_METHODS_PARTIAL_LOWERCASE, path: string}[]; // TODO I am not sure if the ServerRoute is the object expected here
-
+    table(host?: string): Array<{settings: ServerRoute; method: Util.HTTP_METHODS_PARTIAL_LOWERCASE, path: string}>; // TODO I am not sure if the ServerRoute is the object expected here
 }
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -3590,45 +3773,42 @@ export class Server extends Podium {
  +                                                                           +
  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
-
 /**
  *  User-extensible type for application specific state.
  */
-export interface ApplicationState {	
+ /* tslint:disable-next-line:no-empty-interface */
+export interface ApplicationState {
 }
 
 export type PeekListener = (chunk: string, encoding: string) => void;
 
 export namespace Json {
-
     /**
      * @see {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#The_replacer_parameter}
      */
-    export type StringifyReplacer = ((key: string, value: any) => any) | (string | number)[] | undefined;
+    type StringifyReplacer = ((key: string, value: any) => any) | Array<(string | number)> | undefined;
 
     /**
      * Any value greater than 10 is truncated.
      */
-    export type StringifySpace = number | string;
+    type StringifySpace = number | string;
 
     /**
      * For context [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-routeoptionsjson)
      */
-    export interface StringifyArguments {
+    interface StringifyArguments {
         /** the replacer function or array. Defaults to no action. */
         replacer?: StringifyReplacer;
         /** number of spaces to indent nested object keys. Defaults to no indentation. */
         space?: StringifySpace;
-        /** tring suffix added after conversion to JSON string. Defaults to no suffix. **/
+        /* string suffix added after conversion to JSON string. Defaults to no suffix. */
         suffix?: string;
-        /** calls Hoek.jsonEscape() after conversion to JSON string. Defaults to false. **/
+        /* calls Hoek.jsonEscape() after conversion to JSON string. Defaults to false. */
         escape?: boolean;
     }
-
 }
 
 export namespace Lifecycle {
-
     /**
      * Lifecycle methods are the interface between the framework and the application. Many of the request lifecycle steps:
      * extensions, authentication, handlers, pre-handler methods, and failAction function values are lifecyle methods
@@ -3638,34 +3818,35 @@ export namespace Lifecycle {
      * * h - the response toolkit the handler must call to set a response and return control back to the framework.
      * * err - an error object availble only when the method is used as a failAction value.
      */
-    export type Method = (request: Request, h: ResponseToolkit, err?: Error) => ReturnValue;
+    type Method = (request: Request, h: ResponseToolkit, err?: Error) => ReturnValue;
 
     /**
      * Each lifecycle method must return a value or a promise that resolves into a value. If a lifecycle method returns
      * without a value or resolves to an undefined value, an Internal Server Error (500) error response is sent.
      * The return value must be one of:
-     * * Plain value: null, string, number, boolean
-     * * Buffer object
-     * * Error object: plain Error OR a Boom object.
-     * * Stream object
-     * * any object or array
-     * * a toolkit signal:
-     * * a toolkit method response:
-     * * a promise object that resolve to any of the above values
+     * - Plain value: null, string, number, boolean
+     * - Buffer object
+     * - Error object: plain Error OR a Boom object.
+     * - Stream object
+     * - any object or array
+     * - a toolkit signal:
+     * - a toolkit method response:
+     * - a promise object that resolve to any of the above values
      * For more info please [See docs](https://github.com/hapijs/hapi/blob/master/API.md#lifecycle-methods)
      */
-    export type ReturnValue = ReturnValueTypes | (Promise<ReturnValueTypes>);
-    export type ReturnValueTypes =
+    type ReturnValue = ReturnValueTypes | (Promise<ReturnValueTypes>);
+    type ReturnValueTypes =
         (null | string | number | boolean) |
         (Buffer) |
         (Error | Boom.BoomError) |
         (stream.Stream) |
         (object | object[]) |
-        Object |
+        symbol |
         ResponseToolkit;
 
     /**
-     * Various configuration options allows defining how errors are handled. For example, when invalid payload is received or malformed cookie, instead of returning an error, the framework can be configured to perform another action. When supported the failAction option supports the following values:
+     * Various configuration options allows defining how errors are handled. For example, when invalid payload is received or malformed cookie, instead of returning an error, the framework can be
+     * configured to perform another action. When supported the failAction option supports the following values:
      * * 'error' - return the error object as the response.
      * * 'log' - report the error but continue processing the request.
      * * 'ignore' - take no action and continue processing the request.
@@ -3675,16 +3856,22 @@ export namespace Lifecycle {
      * * * err - the error object.
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-failaction-configuration)
      */
-    export type FailAction = 'error' | 'log' | 'ignore' | Method;
-
+    type FailAction = 'error' | 'log' | 'ignore' | Method;
 }
 
 export namespace Util {
     interface Dictionary<T> {
         [key: string]: T;
     }
+
     type HTTP_METHODS_PARTIAL_LOWERCASE = 'get' | 'post' | 'put' | 'patch' | 'delete' | 'options';
-    type HTTP_METHODS_PARTIAL = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | HTTP_METHODS_PARTIAL_LOWERCASE;
+    type HTTP_METHODS_PARTIAL =
+        'GET'
+        | 'POST'
+        | 'PUT'
+        | 'PATCH'
+        | 'DELETE'
+        | 'OPTIONS'
+        | HTTP_METHODS_PARTIAL_LOWERCASE;
     type HTTP_METHODS = 'HEAD' | 'head' | HTTP_METHODS_PARTIAL;
 }
-

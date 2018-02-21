@@ -9,7 +9,7 @@ const serverRoute: ServerRoute = {
     }
 };
 
-declare module 'hapi/definitions/server/server-events' {
+declare module 'hapi' {
     interface ServerEvents {
         once(event: 'test1', listener: (update: string) => void): this;
         once(event: 'test2', listener: (...updates: string[]) => void): this;

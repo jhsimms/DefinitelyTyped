@@ -3,7 +3,7 @@
 import { Request, ResponseToolkit, Server, ServerAuthScheme, ServerAuthSchemeOptions } from "hapi";
 import * as Boom from "boom";
 
-declare module 'hapi/definitions/request/request-auth' {
+declare module 'hapi' {
     interface AuthCredentials {
         user?: string;
     }

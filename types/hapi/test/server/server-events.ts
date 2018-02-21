@@ -2,7 +2,8 @@
 import { Server, ServerEvents } from "hapi";
 import Podium = require('podium');
 import 'hapi/definitions/server/server';
-declare module 'hapi/definitions/server/server-events' {
+
+declare module 'hapi' {
     interface ServerEvents {
         on(event: 'test', listener: (update: string) => void): this;
     }
