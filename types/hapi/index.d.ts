@@ -3208,6 +3208,11 @@ export interface HandlerDecorationMethod {
 }
 
 /**
+ * The general case for decorators added via server.decorate.
+ */
+export type DecorationMethod<T> = (this: T, ...args: any[]) => any;
+
+/**
  * The server object is the main application container. The server manages all incoming requests along with all
  * the facilities provided by the framework. Each server supports a single connection (e.g. listen to port 80).
  * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#server)
@@ -3449,9 +3454,13 @@ export class Server extends Podium {
      * [See docs](https://github.com/hapijs/hapi/blob/master/API.md#-serverdecoratetype-property-method-options)
      */
     decorate(type: 'handler', property: string, method: HandlerDecorationMethod, options?: {apply?: boolean, extend?: boolean}): void;
-    decorate(type: 'request', property: string, method: (this: Request) => Lifecycle.ReturnValue, options?: {apply: false, extend?: boolean}): void;
-    decorate(type: 'request', property: string, method: (request: Request) => (this: Request) => Lifecycle.ReturnValue, options: {apply: true, extend?: boolean}): void;
-    decorate(type: 'toolkit', property: string, method: (this: ResponseToolkit) => Lifecycle.ReturnValue): void;
+    decorate(type: 'request', property: string, method: (existing: ((...args: any[]) => any)) => (request: Request) => DecorationMethod<Request>, options: {apply: true, extend: true}): void;
+    decorate(type: 'request', property: string, method: (request: Request) => DecorationMethod<Request>, options: {apply: true, extend?: boolean}): void;
+    decorate(type: 'request', property: string, method: DecorationMethod<Request>, options?: {apply?: boolean, extend?: boolean}): void;
+    decorate(type: 'toolkit', property: string, method: (existing: ((...args: any[]) => any)) => DecorationMethod<ResponseToolkit>, options: {apply?: boolean, extend: true}): void;
+    decorate(type: 'toolkit', property: string, method: DecorationMethod<ResponseToolkit>, options?: {apply?: boolean, extend?: boolean}): void;
+    decorate(type: 'server', property: string, method: (existing: ((...args: any[]) => any)) => DecorationMethod<Server>, options: {apply?: boolean, extend: true}): void;
+    decorate(type: 'server', property: string, method: DecorationMethod<Server>, options?: {apply?: boolean, extend?: boolean}): void;
 
     /**
      * Used within a plugin to declare a required dependency on other plugins where:
